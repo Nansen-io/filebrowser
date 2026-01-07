@@ -14,6 +14,7 @@ const (
 	LoginMethodPassword LoginMethod = "password"
 	LoginMethodProxy    LoginMethod = "proxy"
 	LoginMethodOidc     LoginMethod = "oidc"
+	LoginMethodChainFs  LoginMethod = "chainfs"
 )
 
 type AuthToken struct {
@@ -70,10 +71,13 @@ type User struct {
 	LockPassword    bool                 `json:"lockPassword"`
 	Permissions     Permissions          `json:"permissions"`
 	ApiKeys         map[string]AuthToken `json:"apiKeys,omitempty"`
-	TOTPSecret      string               `json:"totpSecret,omitempty"`
-	TOTPNonce       string               `json:"totpNonce,omitempty"`
-	LoginMethod     LoginMethod          `json:"loginMethod"`
-	OtpEnabled      bool                 `json:"otpEnabled"` // true if TOTP is enabled, false otherwise
+	TOTPSecret        string               `json:"totpSecret,omitempty"`
+	TOTPNonce         string               `json:"totpNonce,omitempty"`
+	LoginMethod       LoginMethod          `json:"loginMethod"`
+	OtpEnabled        bool                 `json:"otpEnabled"` // true if TOTP is enabled, false otherwise
+	AzureAccessToken  string               `json:"azureAccessToken,omitempty"`  // Azure AD B2C access token (encrypted)
+	AzureRefreshToken string               `json:"azureRefreshToken,omitempty"` // Azure AD B2C refresh token (encrypted)
+	AzureTokenExpiry  int64                `json:"azureTokenExpiry,omitempty"`  // Token expiration time (Unix timestamp)
 	// legacy for migration purposes... og filebrowser has perm attribute
 	Perm           Permissions `json:"perm,omitzero"`
 	Version        int         `json:"version"`

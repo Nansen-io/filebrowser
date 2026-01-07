@@ -44,6 +44,7 @@ type LoginMethods struct {
 	NoAuth       bool               `json:"noauth"` // if set to true, overrides all other auth methods and disables authentication
 	PasswordAuth PasswordAuthConfig `json:"password" validate:"omitempty"`
 	OidcAuth     OidcConfig         `json:"oidc" validate:"omitempty"`
+	ChainFsAuth  ChainFsConfig      `json:"chainfs" validate:"omitempty"`
 }
 
 type PasswordAuthConfig struct {
@@ -82,6 +83,15 @@ type OidcConfig struct {
 	GroupsClaim       string                `json:"groupsClaim"`       // the JSON field name to read groups from. Default is "groups"
 	Provider          *oidc.Provider        `json:"-"`                 // OIDC provider
 	Verifier          *oidc.IDTokenVerifier `json:"-"`                 // OIDC verifier
+}
+
+// ChainFS Azure AD B2C Authentication
+type ChainFsConfig struct {
+	Enabled         bool   `json:"enabled"`         // whether to enable ChainFS authentication
+	ApiBaseUrl      string `json:"apiBaseUrl"`      // ChainFS API base URL (DEV/UAT/PROD)
+	CreateUser      bool   `json:"createUser"`      // create user if not exists
+	AdminClaim      string `json:"adminClaim"`      // claim to check for admin status (e.g., "roles" or "groups")
+	AdminClaimValue string `json:"adminClaimValue"` // value that grants admin privileges (e.g., "admin")
 }
 
 // ValidateOidcAuth processes the OIDC callback and retrieves user identity

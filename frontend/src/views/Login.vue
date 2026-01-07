@@ -60,6 +60,13 @@
               OpenID Connect
             </a>
           </div>
+          <div v-if="chainfsAvailable" class="password-entry">
+            <div v-if="passwordAvailable || oidcAvailable" class="or">{{ $t("login.or") }}</div>
+            <a :href="chainfsLoginURL" class="button button--block direct-login">
+              <!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
+              ChainFS Login
+            </a>
+          </div>
         </div>
       </transition>
     </form>
@@ -214,6 +221,7 @@ export default {
     globalVars: () => globalVars,
     signup: () => globalVars.signup,
     oidcAvailable: () => globalVars.oidcAvailable,
+    chainfsAvailable: () => globalVars.chainfsAvailable,
     passwordAvailable: () => globalVars.passwordAvailable,
     name: () => globalVars.name || "FileBrowser Quantum",
     loginIconUrl: () => globalVars.loginIcon,
@@ -233,6 +241,7 @@ export default {
       recaptcha: globalVars.recaptcha,
       passwordConfirm: "",
       loginURL: globalVars.baseURL + "api/auth/oidc/login",
+      chainfsLoginURL: globalVars.baseURL + "api/auth/chainfs/login",
       inProgress: false,
     };
   },

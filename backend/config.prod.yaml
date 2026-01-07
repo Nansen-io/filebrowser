@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  baseURL: "/"
+
+auth:
+  tokenExpirationHours: 8
+  methods:
+    chainfs:
+      enabled: true
+      apiBaseUrl: "https://nansenprod.azurewebsites.net"
+      createUser: false  # Manual user creation in production for security
+      adminClaim: "roles"
+      adminClaimValue: "FileBrowserAdmin"
+    password:
+      enabled: false
+    oidc:
+      enabled: false
+    proxy:
+      enabled: false
+    noauth: false
+
+userDefaults:
+  permissions:
+    admin: false
+    modify: true
+    share: true
+    delete: true
+    create: true
+    download: true

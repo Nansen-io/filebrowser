@@ -5,6 +5,22 @@ server:
     - levels: "info|warning|error"
   sources:
     - path: "/srv"
+auth:
+  tokenExpirationHours: 2
+  methods:
+    chainfs:
+      enabled: true
+      apiBaseUrl: "https://nansendev.azurewebsites.net"
+      createUser: true
+      adminClaim: "roles"
+      adminClaimValue: "admin"
+    password:
+      enabled: false
+    oidc:
+      enabled: false
+    proxy:
+      enabled: false
+    noauth: false
 userDefaults:
   editorQuickSave: false                  # show quick save button in editor
   hideSidebarFileActions: false           # hide the file actions in the sidebar

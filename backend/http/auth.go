@@ -17,6 +17,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gtsteffaniak/filebrowser/backend/auth"
+	"github.com/gtsteffaniak/filebrowser/backend/chainfs"
 	"github.com/gtsteffaniak/filebrowser/backend/common/errors"
 	"github.com/gtsteffaniak/filebrowser/backend/common/settings"
 	"github.com/gtsteffaniak/filebrowser/backend/common/utils"
@@ -177,6 +178,11 @@ func logoutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (i
 		oidcRedirectUrl := config.Auth.Methods.OidcAuth.LogoutRedirectUrl
 		if oidcRedirectUrl != "" {
 			logoutUrl = oidcRedirectUrl
+		}
+	} else if d.user != nil && d.user.LoginMethod == users.LoginMethodChainFs {
+		chainfsLogoutUrl, err := chainfs.GetLogoutUrl(config.Auth.Methods.ChainFsAuth.ApiBaseUrl)
+		if err == nil && chainfsLogoutUrl != "" {
+			logoutUrl = chainfsLogoutUrl
 		}
 	}
 	if logoutUrl == "" {

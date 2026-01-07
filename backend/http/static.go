@@ -142,6 +142,7 @@ func handleWithStaticData(w http.ResponseWriter, r *http.Request, d *requestCont
 		"externalUrl":          strings.TrimSuffix(config.Server.ExternalUrl, "/"),
 		"onlyOfficeUrl":        settings.Config.Integrations.OnlyOffice.Url,
 		"oidcAvailable":        config.Auth.Methods.OidcAuth.Enabled,
+		"chainfsAvailable":     config.Auth.Methods.ChainFsAuth.Enabled,
 		"proxyAvailable":       config.Auth.Methods.ProxyAuth.Enabled,
 		"passwordAvailable":    config.Auth.Methods.PasswordAuth.Enabled,
 		"mediaAvailable":       settings.MediaEnabled(),
