@@ -51,18 +51,17 @@ The chainfs API has a debug section that provides a reference implementation of 
 Expected endpoints needed to sync filebrowser with chainfs API:
 
 - /api/NansenFile/DirCreate
+- /api/NansenFile/DirGetInfo
 - /api/NansenFile/DirRename
 - /api/NansenFile/DirSubDirs
-- /api/NansenFile/DirGetInfo
 - /api/NansenFile/FileCreate
-- /api/NansenFile/SetTags
-- /api/NansenFile/FileUpdate
 - /api/NansenFile/FileExists
 - /api/NansenFile/FileGetDetails
-- /api/NansenFile/SetTags
+- /api/NansenFile/FileNewest
+- /api/NansenFile/FileUpdate
 - /api/NansenFile/GetFileSimpleInfo
 - /api/NansenFile/ListOfDirectories
-- /api/NansenFile/FileNewest
+- /api/NansenFile/SetTags
 
 File right click menu behaviour:
 
