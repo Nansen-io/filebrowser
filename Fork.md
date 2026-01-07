@@ -12,15 +12,15 @@ to integrate with the ChainFS API (I am the developer behind this project):
 
 Full source code is available to reference in the local path:
 
-C:\git\azure-blockchain-workbench-app\NasenAPI
+C:\git\azure-blockchain-workbench-app\NasenAPI (unfortunate repo directory mispelling).
 
 # Goals
 
 ## Authentication (Priority 1)
 
-Update filebrowser to use Chainfs authentication which is Azure AD B2C (note not entra).
+Update FileBrowser to use ChainFS authentication which is Azure AD B2C (not Entra).
 
-the chainfs API has the endpoint /api/NansenFile/LoginURL that gets the login URL for the current environment.
+The ChainFS API has the endpoint /api/NansenFile/LoginURL that gets the login URL for the current environment. The token should be passed in the Authorization header as a Bearer token for subsequent API calls.
 
 ```bash
 curl -X 'GET' \
@@ -42,13 +42,11 @@ Logout URL (DEV): https://nansendev.azurewebsites.net:/api/User/Logout
 
 ## Right Click Menu Addition (Priority 2)
 
-Add right click menu to Filebrowser that calls chainfs API endpoint: /api/NansenFile/FileCreate
+Add right-click menu to FileBrowser that calls ChainFS API endpoint: /api/NansenFile/FileCreate
 
-The chainfs API has a debug section that provides a reference implementation of encoding a file submission for the FileCreate endpoint:
+The ChainFS API has a debug section that provides a reference implementation of encoding a file submission for the FileCreate endpoint **/api/Debug/FileEncode**
 
-/api/Debug/FileEncode
-
-Expected endpoints needed to sync filebrowser with chainfs API:
+Expected endpoints needed to sync FileBrowser with ChainFS API:
 
 - /api/NansenFile/DirCreate
 - /api/NansenFile/DirGetInfo
@@ -63,25 +61,25 @@ Expected endpoints needed to sync filebrowser with chainfs API:
 - /api/NansenFile/ListOfDirectories
 - /api/NansenFile/SetTags
 
-File right click menu behaviour:
+File right-click menu behaviour:
 
-- Store on Chainfs
-- Update file on Chainfs (when file has changed)
+- Store on ChainFS
+- Update file on ChainFS (when file has changed)
 
-as we are going for a MVP our goal is to simply take a file from filebrowser and store it on chainfs, but we should design with the future in mind.
+**MVP Approach:** Start with DEV environment. Goal is to take a file from FileBrowser and store it on ChainFS, but design with future updates in mind.
 
-If FileBrowser uses UUIDs to track its files, we should that as the filename on chainfs. this part will need planning.
+If FileBrowser uses UUIDs to track its files, we should use that as the filename on ChainFS. This part will need planning.
 
-Tracking file updates will need consideration as well. 
+Tracking file updates will need consideration as well.
 
-Chainfs uses the concept of a **genesisGuid** which is the first revision in a files history. this can be found for any file and or revision already on chainfs by using the end point /api/NansenFile/GetFileSimpleInfo
+ChainFS uses the concept of a **genesisGuid** which is the first revision in a file's history. This can be found for any file or revision already on ChainFS by using the endpoint **/api/NansenFile/GetFileSimpleInfo**
 
-then for submitting an update, you would use /api/NansenFile/FileNewest to get the latest GUID for the genesisGuid (or any file GUID in the history) to get the guidValue of the latest revision of the file stored on chainfs.
+Then for submitting an update, you would use **/api/NansenFile/FileNewest** to get the latest GUID for the genesisGuid (or any file GUID in the history) to get the guidValue of the latest revision of the file stored on ChainFS.
 
-it is not neccesary to sync all changes from filebrowser to chainfs, but users should have an indicator if the latest revision of their file on filebrowser is not stored as an update on chainfs.
+It is not necessary to sync all changes from FileBrowser to ChainFS, but users should have an indicator if the latest revision of their file on FileBrowser is not stored as an update on ChainFS.
 
-## Hosting  (Priority 3)
+## Hosting (Priority 3)
 
-Host Fork on azure. 
+Host fork on Azure.
 
 Three instances will be created: DEV, UAT & PROD that each point to the relevant ChainFS environment.
