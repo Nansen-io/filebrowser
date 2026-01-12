@@ -1,13 +1,17 @@
 server:
   port: 8080
   baseURL: "/"
+  sources:
+    - path: "/srv"
 
 auth:
+  key: "CHANGE-THIS-TO-RANDOM-32BYTES!" # MUST be exactly 32 bytes for AES-256
   tokenExpirationHours: 8
   methods:
     chainfs:
       enabled: true
       apiBaseUrl: "https://nansenprod.azurewebsites.net"
+      clientSecret: "YOUR_AZURE_CLIENT_SECRET_HERE"
       createUser: false  # Manual user creation in production for security
       adminClaim: "roles"
       adminClaimValue: "FileBrowserAdmin"

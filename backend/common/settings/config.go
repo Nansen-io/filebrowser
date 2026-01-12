@@ -419,6 +419,9 @@ func setupAuth(generate bool) {
 	if Config.Auth.Methods.OidcAuth.Enabled {
 		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "oidc")
 	}
+	if Config.Auth.Methods.ChainFsAuth.Enabled {
+		Config.Auth.AuthMethods = append(Config.Auth.AuthMethods, "chainfs")
+	}
 	if Config.Auth.Methods.NoAuth {
 		logger.Warning("Configured with no authentication, this is not recommended.")
 		Config.Auth.AuthMethods = []string{"disabled"}

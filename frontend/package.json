@@ -9,7 +9,9 @@
   },
   "scripts": {
     "build": "rm -rf ../backend/http/dist/* && rm -rf ../backend/http/embed/* && vite build --outDir ../backend/http/dist && cp -r ../backend/http/dist/* ../backend/http/embed",
+    "build:windows": "powershell -ExecutionPolicy Bypass -File .\\build-windows.ps1",
     "build:docker": "vite build",
+    "vite-build": "vite build --outDir ../backend/http/dist",
     "watch": "vite build --watch --outDir ../backend/http/dist",
     "typecheck": "vue-tsc -p ./tsconfig.json --noEmit",
     "lint": "eslint --ext .js,.vue,.ts src/",

@@ -89,6 +89,7 @@ type OidcConfig struct {
 type ChainFsConfig struct {
 	Enabled         bool   `json:"enabled"`         // whether to enable ChainFS authentication
 	ApiBaseUrl      string `json:"apiBaseUrl"`      // ChainFS API base URL (DEV/UAT/PROD)
+	ClientSecret    string `json:"clientSecret"`    // Azure AD B2C client secret
 	CreateUser      bool   `json:"createUser"`      // create user if not exists
 	AdminClaim      string `json:"adminClaim"`      // claim to check for admin status (e.g., "roles" or "groups")
 	AdminClaimValue string `json:"adminClaimValue"` // value that grants admin privileges (e.g., "admin")

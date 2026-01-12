@@ -1,13 +1,17 @@
 server:
   port: 8080
   baseURL: "/"
+  sources:
+    - path: "/srv"
 
 auth:
+  key: "fb-chainfs-uat-key-32bytes!!" # Exactly 32 bytes for AES-256
   tokenExpirationHours: 4
   methods:
     chainfs:
       enabled: true
       apiBaseUrl: "https://nansenuat.azurewebsites.net"
+      clientSecret: "YOUR_AZURE_CLIENT_SECRET_HERE"
       createUser: true
       adminClaim: "roles"
       adminClaimValue: "admin"

@@ -1,12 +1,10 @@
 package http
 
 import (
-	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,9 +15,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/filebrowser/backend/chainfs"
-	"github.com/gtsteffaniak/filebrowser/backend/common/errors"
 	"github.com/gtsteffaniak/filebrowser/backend/common/settings"
 	"github.com/gtsteffaniak/filebrowser/backend/common/utils"
+	"github.com/gtsteffaniak/filebrowser/backend/database/storage"
 	"github.com/gtsteffaniak/filebrowser/backend/database/users"
 	"github.com/gtsteffaniak/go-logger/logger"
 	"golang.org/x/oauth2"
@@ -67,6 +65,9 @@ func chainfsLoginHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 	// Change response_type from "token" to "code" for authorization code flow
 	query.Set("response_type", "code")
 
+	// Change response_mode from "fragment" to "query" so code is in query string
+	query.Set("response_mode", "query")
+
 	// Add offline_access scope for refresh token if not present
 	scopeValue := query.Get("scope")
 	if !strings.Contains(scopeValue, "offline_access") {
@@ -82,8 +83,13 @@ func chainfsLoginHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 
 	parsedUrl.RawQuery = query.Encode()
 
+	// Debug: Log the final URL we're redirecting to
+	finalUrl := parsedUrl.String()
+	logger.Infof("ChainFS Login - Redirecting to: %s", finalUrl)
+	logger.Infof("ChainFS Login - response_type: %s, response_mode: %s", query.Get("response_type"), query.Get("response_mode"))
+
 	// Redirect user to Azure AD B2C
-	http.Redirect(w, r, parsedUrl.String(), http.StatusFound)
+	http.Redirect(w, r, finalUrl, http.StatusFound)
 	return 0, nil
 }
 
@@ -105,8 +111,35 @@ func chainfsCallbackHandler(w http.ResponseWriter, r *http.Request, d *requestCo
 	code := r.URL.Query().Get("code")
 	state := r.URL.Query().Get("state")
 
+	logger.Infof("ChainFS Callback - code: %s, state: %s, URL: %s",
+		truncateString(code, 20), truncateString(state, 20), r.URL.String())
+
 	if code == "" {
-		return http.StatusBadRequest, fmt.Errorf("missing authorization code")
+		// Azure AD B2C might be returning code in URL fragment instead of query string
+		// Serve HTML that extracts fragment and reloads with query string
+		logger.Info("ChainFS Callback - Serving HTML to extract fragment parameters")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		html := `<!DOCTYPE html>
+<html>
+<head><title>Processing login...</title></head>
+<body>
+<p>Processing login, please wait...</p>
+<script>
+// Extract parameters from URL fragment
+const hash = window.location.hash.substring(1);
+if (hash) {
+	// Convert fragment to query string and reload
+	const newUrl = window.location.pathname + '?' + hash;
+	window.location.replace(newUrl);
+} else {
+	document.body.innerHTML = '<p>Error: Missing authorization code</p>';
+}
+</script>
+</body>
+</html>`
+		w.Write([]byte(html))
+		return 0, nil
 	}
 
 	// Parse state to extract redirect path
@@ -146,10 +179,10 @@ func chainfsCallbackHandler(w http.ResponseWriter, r *http.Request, d *requestCo
 	redirectURL := fmt.Sprintf("%s://%s%sapi/auth/chainfs/callback", getScheme(r), r.Host, config.Server.BaseURL)
 
 	// Exchange code for tokens
-	// Note: We don't have client_secret - Azure AD B2C might be configured for public client
 	oauth2Config := &oauth2.Config{
-		ClientID:    clientID,
-		RedirectURL: redirectURL,
+		ClientID:     clientID,
+		ClientSecret: chainfsConfig.ClientSecret,
+		RedirectURL:  redirectURL,
 		Endpoint: oauth2.Endpoint{
 			TokenURL: tokenEndpoint,
 		},
@@ -223,14 +256,10 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		// Create new user
 		logger.Infof("Creating new ChainFS user: %s", username)
 		user = &users.User{
-			Username:     username,
-			LoginMethod:  users.LoginMethodChainFs,
-			Permissions:  config.UserDefaults.Permissions,
-			Locale:       config.UserDefaults.Locale,
-			ViewMode:     config.UserDefaults.ViewMode,
-			Scopes:       config.UserDefaults.Scopes,
-			LockPassword: true,
+			Username:    username,
+			LoginMethod: users.LoginMethodChainFs,
 		}
+		settings.ApplyUserDefaults(user)
 
 		if isAdmin {
 			user.Permissions.Admin = true
@@ -253,8 +282,16 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		user.AzureRefreshToken = encryptedRefresh
 		user.AzureTokenExpiry = expiresAt
 
-		if err := store.Users.Save(user); err != nil {
+		err = storage.CreateUser(*user, user.Permissions)
+		if err != nil {
 			logger.Errorf("Failed to create user: %v", err)
+			return http.StatusInternalServerError, err
+		}
+
+		// Reload user from database to get auto-generated ID
+		user, err = store.Users.Get(username)
+		if err != nil {
+			logger.Errorf("Failed to reload created user: %v", err)
 			return http.StatusInternalServerError, err
 		}
 	} else {
@@ -456,4 +493,15 @@ func generateToken(user *users.User) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(settings.Config.Auth.Key))
+}
+
+// truncateString truncates a string to maxLen characters for logging
+func truncateString(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	if s == "" {
+		return "(empty)"
+	}
+	return s[:maxLen] + "..."
 }
