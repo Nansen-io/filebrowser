@@ -93,11 +93,8 @@ cd frontend
 # Install dependencies
 npm install
 
-# Development build (with hot reload)
-npm run dev
-
-# Production build (optimized)
-npm run build
+# build
+build:windows
 ```
 
 **Windows:**

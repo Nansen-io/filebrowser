@@ -65,6 +65,9 @@
 
   <!-- Sidebar Links Component (replaces sources) -->
   <SidebarLinks />
+
+  <!-- Sidebar Quick Actions -->
+  <SidebarActions />
 </template>
 
 <script>
@@ -74,12 +77,14 @@ import { state, getters, mutations } from "@/store";
 import { fromNow } from "@/utils/moment";
 import SidebarLinks from "./Links.vue";
 import ShareInfoCard from "@/components/files/ShareInfoCard.vue";
+import SidebarActions from "./SidebarActions.vue";
 
 export default {
   name: "SidebarGeneral",
   components: {
     SidebarLinks,
     ShareInfoCard,
+    SidebarActions,
   },
   data() {
     return {};
