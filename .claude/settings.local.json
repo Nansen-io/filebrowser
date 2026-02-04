@@ -19,7 +19,10 @@
       "Bash(curl:*)",
       "Bash(./filebrowser.exe:*)",
       "Bash(grep:*)",
-      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\"; grep -n \"\"^server:\"\" {}')"
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\"; grep -n \"\"^server:\"\" {}')",
+      "Bash(go run:*)",
+      "Bash(git rm:*)",
+      "Bash(wc:*)"
     ]
   }
 }

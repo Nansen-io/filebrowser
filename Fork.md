@@ -1,85 +1,111 @@
-# About
+# FileBrowser ChainFS Fork
 
-This markdown file outlines the plan of forking the file browser project 
+## About
 
-https://github.com/gtsteffaniak/filebrowser
+This is a fork of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrowser) integrated with ChainFS - a blockchain-based file storage system with Azure AD B2C authentication.
 
-to integrate with the ChainFS API (I am the developer behind this project): 
+**Original Project:** https://github.com/gtsteffaniak/filebrowser
 
-- DEV: https://nansendev.azurewebsites.net/swagger/v1/swagger.json 
+**ChainFS API Environments:**
+- DEV: https://nansendev.azurewebsites.net/swagger/v1/swagger.json
 - UAT: https://nansenuat.azurewebsites.net/swagger/v1/swagger.json
 - PROD: https://nansenprod.azurewebsites.net/swagger/v1/swagger.json
 
-Full source code is available to reference in the local path:
+**ChainFS Source Code:** C:\git\azure-blockchain-workbench-app\NasenAPI
 
-C:\git\azure-blockchain-workbench-app\NasenAPI (unfortunate repo directory mispelling).
+---
 
-# Goals
+## Changes from Original Project
 
-## Authentication (Priority 1)
+### 1. Custom Theme (Completed)
 
-Update FileBrowser to use ChainFS authentication which is Azure AD B2C (not Entra).
+**Visual Changes:**
+- Sidebar background: Teal (#3a7d82) instead of gray
+- Header background: Teal (#3a7d82) instead of gray
+- Sidebar/header text: Light (#f4f8f8) instead of dark
+- Body text: Medium gray (#818793) instead of dark gray
+- Links and accents: Teal (#448388) instead of blue
+- File icon backgrounds: Light teal with hover states
 
-The ChainFS API has the endpoint /api/NansenFile/LoginURL that gets the login URL for the current environment. The token should be passed in the Authorization header as a Bearer token for subsequent API calls.
+**Files Modified:**
+- `frontend/src/components/sidebar/Sidebar.vue`
+- `frontend/src/components/sidebar/SidebarActions.vue`
+- `frontend/src/views/bars/Default.vue`
+- `frontend/src/components/files/Icon.vue`
+- `frontend/public/index.html`
+- `frontend/src/css/_variables.css`
 
-```bash
-curl -X 'GET' \
-  'https://nansendev.azurewebsites.net/api/NansenFile/LoginURL' \
-  -H 'accept: text/plain'
-```  
+**Details:** See `THEME_UPDATES_FINAL.md` for complete color specifications and implementation details.
 
-Auth URL for DEV: https://NansenDEV2.b2clogin.com/NansenDEV2.onmicrosoft.com/B2C_1_signupsignin1/oauth2/v2.0/authorize?client_id=ae8e4cce-f313-459b-b86b-2fa59b4f1cb8&redirect_uri=https%3a%2f%2fjwt.ms%2f&response_type=token&scope=openid+profile+offline_access+https%3a%2f%2fNansenDEV2.onmicrosoft.com%2ftasks-api%2faccess_as_user&response_mode=fragment
+### 2. Authentication Integration (In Progress)
 
-Logout URL can be retrieved from the API using the endpoint /api/NansenFile/LogoutURL
+**Goal:** Replace FileBrowser authentication with Azure AD B2C via ChainFS API.
 
-```bash
-curl -X 'GET' \
-  'https://nansendev.azurewebsites.net/api/NansenFile/LogoutURL' \
-  -H 'accept: text/plain'
-```
+**ChainFS Auth Endpoints:**
+- Login URL: `/api/NansenFile/LoginURL`
+- Logout URL: `/api/NansenFile/LogoutURL`
 
-Logout URL (DEV): https://nansendev.azurewebsites.net:/api/User/Logout
+**Authentication Flow:**
+1. User clicks "ChainFS Login"
+2. Backend fetches Azure AD B2C login URL from ChainFS API
+3. User authenticates with Azure AD B2C
+4. Azure redirects back with authorization code
+5. Backend exchanges code for tokens (access, ID, refresh)
+6. Backend creates/updates FileBrowser user with encrypted Azure tokens
+7. Backend issues FileBrowser JWT for session management
 
-## Right Click Menu Addition (Priority 2)
+**Dual Token System:**
+- **Azure tokens:** Stored encrypted in database, used for ChainFS API calls
+- **FileBrowser JWT:** HTTP-only cookie for session management
 
-Add right-click menu to FileBrowser that calls ChainFS API endpoint: /api/NansenFile/FileCreate
+**Status:** Implementation in progress (see Todo.md for remaining tasks)
 
-The ChainFS API has a debug section that provides a reference implementation of encoding a file submission for the FileCreate endpoint **/api/Debug/FileEncode**
+---
 
-Expected endpoints needed to sync FileBrowser with ChainFS API:
+## Future Priorities
 
-- /api/NansenFile/DirCreate
-- /api/NansenFile/DirGetInfo
-- /api/NansenFile/DirRename
-- /api/NansenFile/DirSubDirs
-- /api/NansenFile/FileCreate
-- /api/NansenFile/FileExists
-- /api/NansenFile/FileGetDetails
-- /api/NansenFile/FileNewest
-- /api/NansenFile/FileUpdate
-- /api/NansenFile/GetFileSimpleInfo
-- /api/NansenFile/ListOfDirectories
-- /api/NansenFile/SetTags
+### Priority 2: ChainFS File Sync (Planned)
 
-File right-click menu behaviour:
+Add right-click menu options to sync files to ChainFS blockchain storage:
+- "Store on ChainFS" - Upload file to blockchain
+- "Update on ChainFS" - Sync changes to existing blockchain file
 
-- Store on ChainFS
-- Update file on ChainFS (when file has changed)
+**Key Concepts:**
+- **genesisGuid:** First revision GUID in file history (immutable identifier)
+- ChainFS maintains complete file version history
+- Local sync metadata stored in FileBrowser's BoltDB database
 
-**MVP Approach:** Start with DEV environment. Goal is to take a file from FileBrowser and store it on ChainFS, but design with future updates in mind.
+**Status:** Planned (after authentication completion)
 
-If FileBrowser uses UUIDs to track its files, we should use that as the filename on ChainFS. This part will need planning.
+### Priority 3: Azure Hosting (Planned)
 
-Tracking file updates will need consideration as well.
+Deploy three instances to Azure:
+- DEV → Points to ChainFS DEV environment
+- UAT → Points to ChainFS UAT environment
+- PROD → Points to ChainFS PROD environment
 
-ChainFS uses the concept of a **genesisGuid** which is the first revision in a file's history. This can be found for any file or revision already on ChainFS by using the endpoint **/api/NansenFile/GetFileSimpleInfo**
+**Status:** Planned (after Priority 2 completion)
 
-Then for submitting an update, you would use **/api/NansenFile/FileNewest** to get the latest GUID for the genesisGuid (or any file GUID in the history) to get the guidValue of the latest revision of the file stored on ChainFS.
+---
 
-It is not necessary to sync all changes from FileBrowser to ChainFS, but users should have an indicator if the latest revision of their file on FileBrowser is not stored as an update on ChainFS.
+## Documentation
 
-## Hosting (Priority 3)
+- **BUILD.md** - Build, run, and troubleshooting instructions
+- **Todo.md** - Current tasks and future planning
+- **THEME_UPDATES_FINAL.md** - Complete theme implementation details
+- **README.md** - Original FileBrowser documentation
 
-Host fork on Azure.
+---
 
-Three instances will be created: DEV, UAT & PROD that each point to the relevant ChainFS environment.
+## Development
+
+See **BUILD.md** for instructions on:
+- Building frontend and backend
+- Running locally with ChainFS DEV environment
+- Configuration options
+- Troubleshooting
+
+---
+
+**Fork Status:** Active Development
+**Current Focus:** Priority 1 (Authentication Integration)
