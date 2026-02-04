@@ -5,7 +5,21 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(test -d \"C:\\\\git\\\\filebrowser2\\\\frontend\\\\src\\\\composables\")",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "WebFetch(domain:www.acorn.tools)",
+      "Bash(xargs ls:*)",
+      "WebSearch",
+      "Bash(npm install)",
+      "Bash(dir node_modules)",
+      "Bash(findstr:*)",
+      "Bash(node extract-acorn-colors.js:*)",
+      "Bash(node apply-colors.js:*)",
+      "Bash(npm run build:*)",
+      "Bash(./filebrowser.exe)",
+      "Bash(curl:*)",
+      "Bash(./filebrowser.exe:*)",
+      "Bash(grep:*)",
+      "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\"; grep -n \"\"^server:\"\" {}')"
     ]
   }
 }

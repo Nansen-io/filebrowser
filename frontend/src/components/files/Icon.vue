@@ -358,12 +358,16 @@ export default {
   border-radius: 0.2em;
   padding: 0.1em;
   background: var(--iconBackground);
+  transition: background 0.2s ease;
   /* Performance optimization */
   will-change: auto;
   transform: translateZ(0);
 }
 .icon.active {
   background: var(--background);
+}
+.listing-item:hover .icon {
+  background: var(--iconBackgroundHover, #c7dfe1);
 }
 .purple-icons {
   color: purple;

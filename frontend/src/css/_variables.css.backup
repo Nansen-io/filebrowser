@@ -1,6 +1,6 @@
 :root {
-  --blue: #448388;
-  --dark-blue: #3a7d82;
+  --blue: #2196f3;
+  --dark-blue: #1E88E5;
   --red: #f44336;
   --dark-red: #D32F2F;
   --moon-grey: #f2f2f2;
@@ -11,5 +11,5 @@
   --icon-blue: #1d99f3;
   --icon-violet: #9b59b6;
   --primaryColor: var(--blue);
-  --divider: #e5e7eb;
+  --divider: lightgray;
 }

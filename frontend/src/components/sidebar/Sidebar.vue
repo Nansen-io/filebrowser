@@ -113,13 +113,14 @@ export default {
   transition: 0.5s ease;
   top: 4em;
   padding-bottom: 4em;
-  background-color: rgb(37 49 55 / 5%) !important;
+  background-color: #3a7d82 !important;
+  color: #f4f8f8 !important;
 }
 
 /* sidebar with backdrop-filter support */
 @supports (backdrop-filter: none) {
   #sidebar {
-    backdrop-filter: blur(16px) invert(0.1);
+    backdrop-filter: none;
   }
   #sidebar.dark-mode {
     background-color: rgb(37 49 55 / 33%) !important;
@@ -168,7 +169,7 @@ body.rtl .action {
 
 .credits {
   font-size: 1em;
-  color: var(--textPrimary);
+  color: #f4f8f8 !important;
   padding-left: 1em;
   padding-bottom: 1em;
 }
@@ -182,6 +183,7 @@ body.rtl .action {
 .credits a,
 .credits a:hover {
   cursor: pointer;
+  color: #f4f8f8 !important;
 }
 
 .buffer {
@@ -205,6 +207,21 @@ body.rtl .action {
 
 #sidebar.scrollable::-webkit-scrollbar {
   display: none; /* Chrome, Safari, and Opera */
+}
+
+/* Sidebar text overrides - ensure all text in sidebar is light colored */
+#sidebar,
+#sidebar .user-card,
+#sidebar .quick-toggles,
+#sidebar .card,
+#sidebar .button,
+#sidebar a,
+#sidebar .action {
+  color: #f4f8f8 !important;
+}
+
+#sidebar .action i {
+  color: #f4f8f8 !important;
 }
 
 </style>

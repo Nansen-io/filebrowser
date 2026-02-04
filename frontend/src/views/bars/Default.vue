@@ -247,12 +247,17 @@ header button:hover {
   -webkit-box-shadow: unset !important;
 }
 header {
-  background-color: rgb(37 49 55 / 5%) !important;
+  background-color: #3a7d82 !important;
+  color: #f4f8f8 !important;
+}
+/* Ensure all header text and icons are light colored */
+header, header *, header .action, header .action i, header title {
+  color: #f4f8f8 !important;
 }
 /* Header with backdrop-filter support */
 @supports (backdrop-filter: none) {
   header {
-    backdrop-filter: blur(16px) invert(0.1);
+    backdrop-filter: none;
   }
   .dark-mode-header {
     background-color: rgb(37 49 55 / 33%) !important;
