@@ -22,7 +22,14 @@
       "Bash(xargs -I {} sh -c 'echo \"\"=== {} ===\"\"; grep -n \"\"^server:\"\" {}')",
       "Bash(go run:*)",
       "Bash(git rm:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(taskkill:*)",
+      "Bash(start /B filebrowser.exe -c config.dev.yaml)",
+      "Bash(filebrowser.exe:*)",
+      "Bash(timeout /t 3 /nobreak)",
+      "Bash(C:gitfilebrowser2backendfilebrowser.exe -c C:gitfilebrowser2backendconfig.dev.yaml)",
+      "Bash(ping:*)",
+      "Bash(tasklist:*)"
     ]
   }
 }

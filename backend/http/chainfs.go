@@ -57,6 +57,8 @@ func chainfsLoginHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 		origin = fmt.Sprintf("%s://%s", getScheme(r), r.Host)
 	}
 	callbackURL := fmt.Sprintf("%s%sapi/auth/chainfs/callback", origin, config.Server.BaseURL)
+	// Replace 127.0.0.1 with localhost for Azure B2C compatibility
+	callbackURL = strings.Replace(callbackURL, "127.0.0.1", "localhost", 1)
 
 	// Modify the redirect_uri parameter
 	query := parsedUrl.Query()
@@ -177,6 +179,8 @@ if (hash) {
 
 	// Build callback URL
 	redirectURL := fmt.Sprintf("%s://%s%sapi/auth/chainfs/callback", getScheme(r), r.Host, config.Server.BaseURL)
+	// Replace 127.0.0.1 with localhost for Azure B2C compatibility
+	redirectURL = strings.Replace(redirectURL, "127.0.0.1", "localhost", 1)
 
 	// Exchange code for tokens
 	oauth2Config := &oauth2.Config{

@@ -2,14 +2,18 @@
 
 This guide covers building, testing, and developing the FileBrowser Quantum - ChainFS Integration Fork.
 
+Note: all builds are done in powershell as development is happening on windows.
+
 ## Table of Contents
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
 - [Building the Application](#building-the-application)
 - [Running the Application](#running-the-application)
-- [Development Workflow](#development-workflow)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
+- [Building for Production](#building-for-production)
+- [Additional Resources](#additional-resources)
+- [Support](#support)
 
 ---
 
@@ -38,42 +42,25 @@ This guide covers building, testing, and developing the FileBrowser Quantum - Ch
 
 ## Quick Start
 
-**Linux/macOS:**
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/filebrowser-chainfs.git
-cd filebrowser-chainfs
-
-# 2. Build the frontend
-cd frontend
-npm install
-npm run build
-
-# 3. Build the backend
-cd ../backend
-go build -o filebrowser
-
-# 4. Run the application
-./filebrowser -c config.dev.yaml
-```
-
 **Windows (PowerShell):**
-```powershell
-# 1. Clone the repository
-git clone https://github.com/your-username/filebrowser-chainfs.git
-cd filebrowser-chainfs
 
-# 2. Build the frontend
-cd frontend
+# 1. Build the frontend
+```powershell
+cd C:/git/filebrowser2/frontend
 npm install
 npm run build:windows
+```
 
-# 3. Build the backend
-cd ..\backend
+# 2. Build the backend
+```powershell
+cd C:/git/filebrowser2/backend
 go build -o filebrowser.exe
+```
 
-# 4. Run the application
-.\filebrowser.exe -c config.dev.yaml
+# 3. Run the application
+```powershell
+cd C:/git/filebrowser2/backend
+./filebrowser.exe -c config.dev.yaml
 ```
 
 Open browser to: `http://localhost:8080`
@@ -86,20 +73,9 @@ Open browser to: `http://localhost:8080`
 
 The frontend is a Vue.js 3 application that must be built before running the backend.
 
-**Linux/macOS:**
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# build
-build:windows
-```
-
 **Windows:**
 ```powershell
-cd frontend
+cd C:/git/filebrowser2/frontend
 
 # Install dependencies
 npm install
@@ -118,34 +94,21 @@ npm run build:windows
 - These files are embedded into the Go binary during backend build
 
 **Frontend Development Server:**
-```bash
-npm run dev
-# Runs on http://localhost:5173
-# Proxies API requests to backend on http://localhost:8080
-```
+
+Is launched by the backend. do not try to run seperately.
 
 ### Backend Build
 
 The backend is written in Go and embeds the frontend assets.
 
-```bash
-cd backend
+```powershell
+cd C:/git/filebrowser2/backend
 
 # Development build
-go build -o filebrowser
+go build -o filebrowser.exe
 
 # Production build (optimized)
-go build -ldflags="-s -w" -o filebrowser
-
-# Cross-compilation examples
-# Windows
-GOOS=windows GOARCH=amd64 go build -o filebrowser.exe
-
-# Linux
-GOOS=linux GOARCH=amd64 go build -o filebrowser
-
-# macOS
-GOOS=darwin GOARCH=amd64 go build -o filebrowser
+go build -ldflags="-s -w" -o filebrowser.exe
 ```
 
 **Build Flags:**
@@ -172,38 +135,24 @@ The application uses YAML configuration files:
 ### Starting the Server
 
 **Using specific config:**
-```bash
-cd backend
+```powershell
+cd C:/git/filebrowser2/backend
 
-# DEV environment
-./filebrowser -c config.dev.yaml
+# DEV environment (for all testing use DEV config)
+./filebrowser.exe -c config.dev.yaml
 
 # UAT environment
-./filebrowser -c config.uat.yaml
+./filebrowser.exe -c config.uat.yaml
 
 # PROD environment
-./filebrowser -c config.prod.yaml
-
-# Default (uses config.yaml)
-./filebrowser
+./filebrowser.exe -c config.prod.yaml
 ```
 
 **Command-line flags:**
-```bash
-./filebrowser -h              # Show help
-./filebrowser -c              # Print default config
-./filebrowser version         # Show version info
-```
-
-**Environment Variables:**
-```bash
-# Custom config path
-export FILEBROWSER_CONFIG=/path/to/config.yaml
-./filebrowser
-
-# Generate config.yaml template
-export FILEBROWSER_GENERATE_CONFIG=true
-./filebrowser
+```powershell
+./filebrowser.exe -h              # Show help
+./filebrowser.exe -c              # Print default config
+./filebrowser.exe version         # Show version info
 ```
 
 ### Default Ports
@@ -230,92 +179,12 @@ After starting the server:
 
 ---
 
-## Development Workflow
-
-### Backend Development
-
-**1. Make code changes**
-```bash
-cd backend
-# Edit .go files
-```
-
-**2. Rebuild**
-```bash
-go build -o filebrowser
-```
-
-**3. Run**
-```bash
-./filebrowser -c config.dev.yaml
-```
-
-**Hot reload (using tools):**
-```bash
-# Install air (Go hot reload tool)
-go install github.com/cosmtrek/air@latest
-
-# Run with hot reload
-air
-```
-
-### Frontend Development
-
-**1. Start backend** (in one terminal):
-```bash
-cd backend
-./filebrowser -c config.dev.yaml
-```
-
-**2. Start frontend dev server** (in another terminal):
-```bash
-cd frontend
-npm run dev
-```
-
-**3. Access frontend dev server:**
-- Frontend: `http://localhost:5173` (with hot reload)
-- API requests automatically proxy to backend on `http://localhost:8080`
-
-**Frontend file structure:**
-```
-frontend/
-├── src/
-│   ├── api/          # API client functions
-│   ├── components/   # Vue components
-│   ├── router/       # Vue Router config
-│   ├── store/        # State management
-│   ├── utils/        # Utility functions
-│   └── views/        # Page components
-├── public/           # Static assets
-├── package.json      # Node dependencies
-└── vite.config.ts    # Vite build config
-```
-
-### Making Changes to Authentication
-
-**Backend changes:**
-1. Modify `backend/http/chainfs.go` - Authentication handlers
-2. Modify `backend/chainfs/client.go` - ChainFS API client
-3. Rebuild: `go build -o filebrowser`
-
-**Frontend changes:**
-1. Modify `frontend/src/views/Login.vue` - Login UI
-2. Hot reload automatically applies changes (if using `npm run dev`)
-3. For production: `npm run build` then rebuild backend
-
-**Configuration changes:**
-1. Edit `backend/config.dev.yaml` (or other config files)
-2. Restart backend: `./filebrowser -c config.dev.yaml`
-
----
-
 ## Testing
 
 ### Backend Tests
 
-```bash
-cd backend
+```powershell
+cd C:/git/filebrowser2/backend
 
 # Run all tests
 go test ./...
@@ -335,8 +204,8 @@ go test -run TestChainFsLogin ./http/...
 
 ### Frontend Tests
 
-```bash
-cd frontend
+```powershell
+cd C:/git/filebrowser2/frontend
 
 # Run unit tests
 npm run test
@@ -346,58 +215,6 @@ npm run test:coverage
 
 # Run tests in watch mode
 npm run test:watch
-```
-
-### Integration Testing
-
-**Manual testing checklist:**
-
-1. **ChainFS Login Flow:**
-   - [ ] Click "ChainFS Login" button
-   - [ ] Redirected to Azure AD B2C login page
-   - [ ] Enter valid credentials
-   - [ ] Redirected back to FileBrowser
-   - [ ] Logged in successfully (JWT cookie set)
-   - [ ] Can browse files
-
-2. **User Creation:**
-   - [ ] New user auto-created on first login (if `createUser: true`)
-   - [ ] User stored in `database.db`
-   - [ ] Azure tokens encrypted in database
-
-3. **Admin Permissions:**
-   - [ ] User with admin role claim has admin access
-   - [ ] User without admin role has normal access
-
-4. **Logout:**
-   - [ ] Click logout
-   - [ ] Redirected to Azure AD B2C logout
-   - [ ] Session cleared
-   - [ ] Cannot access files without re-login
-
-5. **Token Persistence:**
-   - [ ] Close browser
-   - [ ] Reopen FileBrowser
-   - [ ] Still logged in (session persists)
-
-### Testing Against Different Environments
-
-**DEV (Development):**
-```bash
-./filebrowser -c config.dev.yaml
-# Test against: https://nansendev.azurewebsites.net
-```
-
-**UAT (User Acceptance Testing):**
-```bash
-./filebrowser -c config.uat.yaml
-# Test against: https://nansenuat.azurewebsites.net
-```
-
-**PROD (Production):**
-```bash
-./filebrowser -c config.prod.yaml
-# Test against: https://nansenprod.azurewebsites.net
 ```
 
 ### Database Inspection
@@ -432,22 +249,22 @@ npm run build
 ```
 
 **2. Backend build fails with "template: pattern matches no files"**
-```bash
+```powershell
 # Frontend not built yet
-cd frontend
+cd C:/git/filebrowser2/frontend
 npm run build
 
 # Then rebuild backend
-cd ../backend
-go build -o filebrowser
+cd C:/git/filebrowser2/backend
+go build -o filebrowser.exe
 ```
 
 **3. Go module issues**
-```bash
-cd backend
+```powershell
+cd C:/git/filebrowser2/backend
 go mod tidy
 go mod download
-go build -o filebrowser
+go build -o filebrowser.exe
 ```
 
 ### Common Runtime Issues
@@ -496,15 +313,8 @@ auth:
 **Problem:** Another process using port 8080
 
 **Solution:**
-```bash
-# Find process using port
-# Linux/Mac:
-lsof -i :8080
-
-# Windows:
+```powershell
 netstat -ano | findstr :8080
-
-# Kill process or change port in config
 ```
 
 **5. Database locked**
@@ -530,117 +340,35 @@ server:
 - Console output (stdout/stderr)
 - No default log files (logs to console only)
 
-**Debugging authentication:**
-```bash
-# Run with verbose output
-./filebrowser -c config.dev.yaml 2>&1 | tee filebrowser.log
-```
-
-### Performance Issues
-
-**1. Slow frontend loading**
-- Use production build: `npm run build` (not `npm run dev`)
-- Frontend assets are embedded and served from memory
-
-**2. Slow backend startup**
-- First run creates database and indexes
-- Subsequent starts are faster
-- Large file directories may take time to index
-
 ---
 
 ## Building for Production
 
 ### Complete Production Build
 
-```bash
+```powershell
 # 1. Build frontend (production mode)
-cd frontend
+cd C:/git/filebrowser2/frontend
 npm install --production
 npm run build
 
 # 2. Build backend (optimized)
-cd ../backend
-go build -ldflags="-s -w" -o filebrowser
+cd C:/git/filebrowser2/backend
+go build -ldflags="-s -w" -o filebrowser.exe
 
 # 3. Prepare distribution
 mkdir -p dist
-cp filebrowser dist/
-cp config.prod.yaml dist/config.yaml
-cp Claude.md dist/
-cp BUILD.md dist/
+copy filebrowser.exe dist/
+copy config.prod.yaml dist/config.yaml
 
 # 4. Create tarball
 cd dist
 tar -czf filebrowser-chainfs-v1.0.0.tar.gz *
 ```
 
-### Docker Build
-
-```bash
-# Build Docker image
-docker build -t filebrowser-chainfs:latest .
-
-# Run container
-docker run -d \
-  -p 8080:8080 \
-  -v /path/to/files:/srv \
-  -v /path/to/database:/app/database.db \
-  -e FILEBROWSER_CONFIG=/app/config.prod.yaml \
-  filebrowser-chainfs:latest
-```
-
-### Azure Deployment
-
-See **Priority 3: Azure Hosting** in `Claude.md` for deployment instructions.
-
----
-
-## Development Tips
-
-### Code Style
-
-**Go:**
-- Follow standard Go conventions
-- Run `gofmt` before committing
-- Use `golangci-lint` for linting
-
-**Vue.js/TypeScript:**
-- Follow Vue.js 3 Composition API style
-- Use ESLint for linting
-- Run `npm run lint` before committing
-
-### Git Workflow
-
-```bash
-# Create feature branch
-git checkout -b feature/your-feature-name
-
-# Make changes and commit
-git add .
-git commit -m "feat: add feature description"
-
-# Push to remote
-git push origin feature/your-feature-name
-
-# Create pull request
-```
-
-### Commit Message Convention
-
-```
-feat: Add new feature
-fix: Fix bug
-docs: Update documentation
-style: Code style changes
-refactor: Code refactoring
-test: Add tests
-chore: Maintenance tasks
-```
-
 ### Useful Commands
 
-```bash
+```powershell
 # Check Go version
 go version
 
@@ -651,7 +379,7 @@ node --version
 npm --version
 
 # View FileBrowser version
-./filebrowser version
+./filebrowser.exe version
 
 # Clean build artifacts
 cd backend && go clean
@@ -672,17 +400,7 @@ cd frontend && rm -rf dist node_modules
 
 ## Support
 
-For issues specific to this fork:
-1. Check this BUILD.md guide
-2. Review [Claude.md](Claude.md) for architecture details
-3. Check ChainFS API source code: `C:\git\azure-blockchain-workbench-app\NasenAPI`
-
 For upstream FileBrowser issues:
 - Original repository: https://github.com/gtsteffaniak/filebrowser
 - Documentation: https://github.com/gtsteffaniak/filebrowser/wiki
 
----
-
-**Last Updated:** 2026-01-13
-**Version:** 1.0.0
-**Status:** Priority 1 (Authentication) Complete

@@ -1,17 +1,3 @@
-# Environment Cleanup
-
-`Claude.md` has been filled with planning garbage by the agent which is a very bad idea.
-
-The agent should track changes this fork has changed in `Fork.md` and reference when needed.
-
-`BUILD.md` and `Testing.md` have overlapping information.
-
-`BUILD.md` is correct while `Testing.md` seems to have several halucinations such as
-
-`--config` option being mentioned several times where filebroswer does not have this option, it does have `-c` which is correctly referenced in `BUILD.md`
-
-Im confident `Testing.md` is nothing but confusing garbage.
-
 # Frontend
 
 ## CSS change

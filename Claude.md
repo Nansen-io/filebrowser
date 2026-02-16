@@ -34,12 +34,15 @@ This is a fork of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrow
 ## Build Commands
 
 ```bash
+# kill existing process if running
+taskkill /F /IM filebrowser.exe
+
 # Frontend build
-cd frontend
+cd C:/git/filebrowser2/frontend
 npm run build
 
 # Backend build
-cd backend
+cd C:/git/filebrowser2/backend
 go build -o filebrowser.exe
 
 # Run with config

@@ -156,8 +156,8 @@ export default {
   width: 100%;
   padding: 0.75em 1em;
   border-radius: 0.5em;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #f4f8f8 !important;
+  background-color: var(--background);
+  color: var(--textPrimary);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
@@ -165,7 +165,7 @@ export default {
 }
 
 .action-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--surfaceSecondary);
   transform: translateY(-2px);
 }
 
@@ -174,11 +174,11 @@ export default {
 }
 
 .action-button span {
-  color: #f4f8f8 !important;
+  color: var(--textPrimary);
 }
 
 .action-icon {
-  color: #f4f8f8 !important;
+  color: var(--textPrimary);
   font-size: 1.25em;
 }
 
