@@ -1,9 +1,6 @@
 # Claude Project Instructions
 
 ## Git Workflow
-- **The user will always handle git commits**
-- Never use `git add`, `git commit`, or `git push`
-- You can use git commands for reading: `git status`, `git diff`, `git log`
 - Focus on making changes, user will commit them
 
 ## Documentation Philosophy
@@ -15,9 +12,7 @@
 4. **THEME_UPDATES_FINAL.md** - Theme implementation details
 
 ### Rules
-- **Do not create planning documents** that persist across sessions
-- Planning should only exist in Todo.md or within the current session
-- Fork.md documents completed work, not future plans
+- Fork.md is for tracking this fork changes.Build.md
 - Keep documentation concise and avoid redundancy
 
 ## Project Context
@@ -31,23 +26,9 @@ This is a fork of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrow
 
 **ChainFS Source:** C:\git\azure-blockchain-workbench-app\NasenAPI
 
-## Build Commands
+## Build 
 
-```bash
-# kill existing process if running
-taskkill /F /IM filebrowser.exe
-
-# Frontend build
-cd C:/git/filebrowser2/frontend
-npm run build
-
-# Backend build
-cd C:/git/filebrowser2/backend
-go build -o filebrowser.exe
-
-# Run with config
-./filebrowser.exe -c config.dev.yaml
-```
+See [BUILD](BUILD.md)
 
 ## Current Priorities
 
