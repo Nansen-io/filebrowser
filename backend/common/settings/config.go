@@ -326,7 +326,12 @@ func setupSources(generate bool) {
 			}
 			exists := utils.CheckPathExists(realPath)
 			if !exists {
-				logger.Warningf("source path %v is currently not available", realPath)
+				logger.Warningf("source path %v does not exist, attempting to create it", realPath)
+				if err := os.MkdirAll(realPath, 0755); err != nil {
+					logger.Warningf("could not create source path %v: %v", realPath, err)
+				} else {
+					logger.Infof("created source directory: %v", realPath)
+				}
 			}
 			name := filepath.Base(realPath)
 			if name == "\\" {

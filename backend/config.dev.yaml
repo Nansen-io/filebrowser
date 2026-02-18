@@ -2,7 +2,7 @@ server:
   port: 8080
   baseURL: "/"
   sources:
-    - path: "/srv"
+    - path: "./testfiles"
 
 auth:
   key: "fb-chainfs-dev-key-32bytes-xxyyz" # Exactly 32 bytes for AES-256
