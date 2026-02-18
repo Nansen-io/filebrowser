@@ -2,16 +2,38 @@
 
 This guide covers building, testing, and developing the FileBrowser Quantum - ChainFS Integration Fork.
 
-Note: all builds are done in powershell as development is happening on windows.
-
 ## Table of Contents
 - [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Building the Application](#building-the-application)
+  - [Required Software](#required-software)
+  - [Optional Tools](#optional-tools)
+- [Quick Start (DEV Build)](#quick-start-dev-build)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+  - [Run](#run)
 - [Running the Application](#running-the-application)
+  - [Configuration Files](#configuration-files)
+- [Misc Info](#misc-info)
+  - [Command-line flags](#command-line-flags)
+  - [Default Ports](#default-ports)
+  - [Accessing the Application](#accessing-the-application)
+  - [Initial Admin User](#initial-admin-user)
 - [Testing](#testing)
+  - [Backend](#backend-1)
+  - [Frontend](#frontend-1)
+  - [Database](#database)
 - [Troubleshooting](#troubleshooting)
+  - [Frontend build fails](#frontend-build-fails)
+  - [Backend build](#backend-build)
+  - [Go module issues](#go-module-issues)
+  - [Common Runtime Issues](#common-runtime-issues)
+    - ["Auth Methods: [password]" instead of "Auth Methods: [chainfs]"](#auth-methods-password-instead-of-chainfs)
+    - [Invalid redirect URI](#invalid-redirect-uri)
+    - ["User does not exist"](#user-does-not-exist)
+    - [Port already in use](#port-already-in-use)
+    - [Database locked](#database-locked)
+  - [Viewing Logs](#viewing-logs)
 - [Building for Production](#building-for-production)
+- [Useful Commands](#useful-commands)
 - [Additional Resources](#additional-resources)
 - [Support](#support)
 
@@ -19,111 +41,59 @@ Note: all builds are done in powershell as development is happening on windows.
 
 ## Prerequisites
 
-### Required Software
-
 **Backend (Go):**
 - Go 1.25.0 or higher
-- Git
+- git
 
 **Frontend (Vue.js):**
 - Node.js 18+ (LTS recommended)
 - npm 9+ or yarn
 
-**Operating Systems:**
-- Windows 10/11
-- Linux (Ubuntu 20.04+, Debian, etc.)
-- macOS 11+
-
-### Optional Tools
-- Docker (for containerized deployment)
-- Azure CLI (for cloud deployment)
+**Operating System:** 
+- Linux
 
 ---
 
-## Quick Start
+## Quick Start (DEV Build)
 
-**Windows (PowerShell):**
+### Frontend
 
-# 1. Build the frontend
-```powershell
-cd C:/git/filebrowser2/frontend
+```bash
+cd /home/mem/git/filebrowser/frontend
 npm install
-npm run build:windows
+npm run build
 ```
 
-# 2. Build the backend
-```powershell
-cd C:/git/filebrowser2/backend
-go build -o filebrowser.exe
+### Backend
+
+note: requires frontend to be built.
+
+```bash
+cd /home/mem/git/filebrowser/backend
+
+# Development build (use this by default)
+go build -o filebrowser
+
+# Production build (optimized), only use for deployment to azure (not ready yet)
+go build -ldflags="-s -w" -o filebrowser
+
 ```
 
-# 3. Run the application
-```powershell
-cd C:/git/filebrowser2/backend
-./filebrowser.exe -c config.dev.yaml
+### Run 
+
+note: requires frontend and backend to have been built.
+
+```bash
+cd /home/mem/git/filebrowser/backend
+./filebrowser -c config.dev.yaml
 ```
 
 Open browser to: `http://localhost:8080`
 
----
-
-## Building the Application
-
-### Frontend Build
-
-The frontend is a Vue.js 3 application that must be built before running the backend.
-
-**Windows:**
-```powershell
-cd C:/git/filebrowser2/frontend
-
-# Install dependencies
-npm install
-
-# Development build (with hot reload)
-npm run dev
-
-# Production build (Windows-specific)
-npm run build:windows
-```
-
-**Note:** The build script uses Unix commands (`rm`, `cp`) on Linux/macOS. On Windows, use `npm run build:windows` which uses a PowerShell script, or run the build through Git Bash/WSL.
-
-**Build Output:**
-- Production build creates files in: `frontend/dist/`
-- These files are embedded into the Go binary during backend build
-
-**Frontend Development Server:**
-
-Is launched by the backend. do not try to run seperately.
-
-### Backend Build
-
-The backend is written in Go and embeds the frontend assets.
-
-```powershell
-cd C:/git/filebrowser2/backend
-
-# Development build
-go build -o filebrowser.exe
-
-# Production build (optimized)
-go build -ldflags="-s -w" -o filebrowser.exe
-```
-
-**Build Flags:**
-- `-ldflags="-s -w"` - Strip debug info and symbol table (smaller binary)
-- `-o` - Specify output filename
-
-**Binary Size:**
-- Development: ~45-50 MB
-- Production (stripped): ~35-40 MB
 
 ---
 
 ## Running the Application
-
-### Configuration Files
 
 The application uses YAML configuration files:
 
@@ -132,27 +102,31 @@ The application uses YAML configuration files:
 - `config.uat.yaml` - UAT environment (points to nansenuat.azurewebsites.net)
 - `config.prod.yaml` - PROD environment (points to nansenprod.azurewebsites.net)
 
-### Starting the Server
-
 **Using specific config:**
-```powershell
-cd C:/git/filebrowser2/backend
+
+```bash
+cd /home/mem/git/filebrowser/backend
 
 # DEV environment (for all testing use DEV config)
-./filebrowser.exe -c config.dev.yaml
+./filebrowser -c config.dev.yaml
 
 # UAT environment
-./filebrowser.exe -c config.uat.yaml
+./filebrowser -c config.uat.yaml
 
 # PROD environment
-./filebrowser.exe -c config.prod.yaml
+./filebrowser -c config.prod.yaml
 ```
 
-**Command-line flags:**
-```powershell
-./filebrowser.exe -h              # Show help
-./filebrowser.exe -c              # Print default config
-./filebrowser.exe version         # Show version info
+---
+
+## Misc Info
+
+### Command-line flags
+
+```bash
+./filebrowser -h              # Show help
+./filebrowser -c              # Print default config
+./filebrowser version         # Show version info
 ```
 
 ### Default Ports
@@ -181,10 +155,10 @@ After starting the server:
 
 ## Testing
 
-### Backend Tests
+### Backend
 
-```powershell
-cd C:/git/filebrowser2/backend
+```bash
+cd /home/mem/git/filebrowser/backend
 
 # Run all tests
 go test ./...
@@ -202,10 +176,10 @@ go test -v ./...
 go test -run TestChainFsLogin ./http/...
 ```
 
-### Frontend Tests
+### Frontend
 
-```powershell
-cd C:/git/filebrowser2/frontend
+```bash
+cd /home/mem/git/filebrowser/frontend
 
 # Run unit tests
 npm run test
@@ -217,7 +191,9 @@ npm run test:coverage
 npm run test:watch
 ```
 
-### Database Inspection
+### Database
+
+note: this is used to see if users exist
 
 ```bash
 # View database contents (requires sqlite3)
@@ -237,39 +213,42 @@ sqlite> .quit
 
 ## Troubleshooting
 
-### Common Build Issues
+### Frontend build fails
 
-**1. Frontend build fails**
 ```bash
 # Clear node_modules and reinstall
-cd frontend
+cd /home/mem/git/filebrowser/frontend
 rm -rf node_modules package-lock.json
 npm install
 npm run build
 ```
 
-**2. Backend build fails with "template: pattern matches no files"**
-```powershell
+### Backend build
+
+**fails with "template: pattern matches no files"**
+
+```bash
 # Frontend not built yet
-cd C:/git/filebrowser2/frontend
+cd /home/mem/git/filebrowser/frontend
 npm run build
 
 # Then rebuild backend
-cd C:/git/filebrowser2/backend
-go build -o filebrowser.exe
+cd /home/mem/git/filebrowser/backend
+go build -o filebrowser
 ```
 
-**3. Go module issues**
-```powershell
-cd C:/git/filebrowser2/backend
+### Go module issues
+
+```bash
+cd /home/mem/git/filebrowser/backend
 go mod tidy
 go mod download
-go build -o filebrowser.exe
+go build -o filebrowser
 ```
 
 ### Common Runtime Issues
 
-**1. "Auth Methods: [password]" instead of "Auth Methods: [chainfs]"**
+#### "Auth Methods: [password]" instead of "Auth Methods: [chainfs]"
 
 **Problem:** ChainFS auth not enabled in config
 
@@ -284,7 +263,9 @@ auth:
       enabled: false # Must be false
 ```
 
-**2. "Invalid redirect URI" error from Azure AD B2C**
+#### Invalid redirect URI" 
+
+from Azure AD B2C
 
 **Problem:** Redirect URI not registered in Azure AD B2C
 
@@ -295,7 +276,7 @@ auth:
   ```
 - Ensure exact match (protocol, domain, port, path)
 
-**3. "User does not exist" error**
+#### "User does not exist"
 
 **Problem:** `createUser: false` but user not in database
 
@@ -308,25 +289,43 @@ auth:
       createUser: true  # Enable auto-user creation
 ```
 
-**4. Port already in use**
+#### Port already in use
 
 **Problem:** Another process using port 8080
 
 **Solution:**
-```powershell
-netstat -ano | findstr :8080
+```bash
+# its probably just an old copy of filebrowser running
+
+# first, just run killall
+killall filebrowser
+
+# check if port is still in use
+netstat -tupln | grep 8080
+
+# if a different process ask human to assist
 ```
 
-**5. Database locked**
+#### Database locked
 
 **Problem:** Multiple FileBrowser instances accessing same database
 
 **Solution:**
-- Stop all FileBrowser instances
-- Delete `database.db-shm` and `database.db-wal` files
-- Restart FileBrowser
 
-### Viewing Logs
+```bash
+# kill all copies of filebrowser
+killall filebrowser
+
+# delete files
+cd /home/mem/git/filebrowser/backend
+rm database.db-shm database.db-wal
+
+# Restart FileBrowser
+```
+
+---
+
+## Viewing Logs
 
 **Enable verbose logging:**
 ```yaml
@@ -344,31 +343,31 @@ server:
 
 ## Building for Production
 
-### Complete Production Build
-
-```powershell
+```bash
 # 1. Build frontend (production mode)
-cd C:/git/filebrowser2/frontend
+cd /home/mem/git/filebrowser/frontend
 npm install --production
 npm run build
 
 # 2. Build backend (optimized)
-cd C:/git/filebrowser2/backend
-go build -ldflags="-s -w" -o filebrowser.exe
+cd /home/mem/git/filebrowser/backend
+go build -ldflags="-s -w" -o filebrowser
 
 # 3. Prepare distribution
 mkdir -p dist
-copy filebrowser.exe dist/
-copy config.prod.yaml dist/config.yaml
+cp filebrowser dist/
+cp config.prod.yaml dist/config.yaml
 
 # 4. Create tarball
 cd dist
 tar -czf filebrowser-chainfs-v1.0.0.tar.gz *
 ```
 
-### Useful Commands
+---
 
-```powershell
+## Useful Commands
+
+```bash
 # Check Go version
 go version
 
@@ -379,7 +378,7 @@ node --version
 npm --version
 
 # View FileBrowser version
-./filebrowser.exe version
+./filebrowser version
 
 # Clean build artifacts
 cd backend && go clean
