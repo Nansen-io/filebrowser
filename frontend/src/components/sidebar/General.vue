@@ -414,11 +414,27 @@ button.action {
   padding-right: 1em !important;
   justify-content: center;
   align-items: center;
+  color: #6b7280;
 }
 
 a.person-button {
   text-decoration: none;
   cursor: pointer;
+}
+
+.person-button .material-icons,
+.person-button .material-symbols-outlined {
+  color: var(--primaryColor);
+  background-color: #eaf2f4;
+  padding: 0.2em;
+  border-radius: 0.4em;
+}
+
+.logout-button .material-icons {
+  color: var(--primaryColor);
+  background-color: #eaf2f4;
+  padding: 0.2em;
+  border-radius: 0.4em;
 }
 
 .file-actions {

@@ -348,6 +348,7 @@ export default {
 }
 
 .sidebar-links {
+  display: none;
   padding: 1em;
   overflow: auto;
   min-height: 5em;

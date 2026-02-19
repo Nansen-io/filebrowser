@@ -177,12 +177,15 @@ export default {
 }
 
 .action-button span {
-  color: var(--textPrimary);
+  color: #6b7280;
 }
 
 .action-icon {
-  color: var(--textPrimary);
+  color: var(--primaryColor);
   font-size: 1.25em;
+  background-color: #eaf2f4;
+  padding: 0.3em;
+  border-radius: 0.4em;
 }
 
 /* Animation styles */

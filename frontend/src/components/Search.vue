@@ -764,6 +764,16 @@ body.rtl #search #result ul>* {
 }
 
 /* Search Input Placeholder */
+#search-input input,
+#search-input .main-input {
+  color: #ffffff;
+}
+
+#search-input input::placeholder,
+#search-input .main-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
 #search::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.5);
 }

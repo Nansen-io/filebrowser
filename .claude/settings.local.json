@@ -31,7 +31,8 @@
       "Bash(ping:*)",
       "Bash(tasklist:*)",
       "Bash(npm run)",
-      "Bash(pgrep:*)"
+      "Bash(pgrep:*)",
+      "Bash(killall:*)"
     ]
   }
 }
