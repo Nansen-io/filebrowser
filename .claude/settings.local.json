@@ -29,7 +29,9 @@
       "Bash(timeout /t 3 /nobreak)",
       "Bash(C:gitfilebrowser2backendfilebrowser.exe -c C:gitfilebrowser2backendconfig.dev.yaml)",
       "Bash(ping:*)",
-      "Bash(tasklist:*)"
+      "Bash(tasklist:*)",
+      "Bash(npm run)",
+      "Bash(pgrep:*)"
     ]
   }
 }

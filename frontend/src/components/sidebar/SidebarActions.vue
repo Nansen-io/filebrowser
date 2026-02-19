@@ -140,6 +140,9 @@ export default {
 .sidebar-actions {
   padding: 1em;
   margin-top: 0.5em;
+  background-color: var(--background);
+  border-radius: 1em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .inner-card {
@@ -156,7 +159,7 @@ export default {
   width: 100%;
   padding: 0.75em 1em;
   border-radius: 0.5em;
-  background-color: var(--background);
+  background-color: transparent;
   color: var(--textPrimary);
   border: none;
   cursor: pointer;
@@ -165,7 +168,7 @@ export default {
 }
 
 .action-button:hover {
-  background-color: var(--surfaceSecondary);
+  background-color: var(--alt-background);
   transform: translateY(-2px);
 }
 

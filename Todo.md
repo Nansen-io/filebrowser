@@ -4,42 +4,65 @@ I need filebrowser GUI (this repo) to match the same colour scheme used here: `h
 
 I will use --chrome option in claude code to enable the agent to inspect the CSS for filebrowser frontend which is usually accessed with `http://localhost:8080`
 
+## References
+
+### Muted Font
+
+`https://www.acorn.tools/login` `class="text-sm text-muted-foreground"`
+
+
 ## Current CSS Issues
 
-### Icons
+### File browser font
+
+
+
+### 1
+
+`class="material-icons action-icon"`
+
+should match File browser icons:
+
+icon forground  `#448388` 
+
+icon background `#eaf2f4`
+
+### 2
+
+`class="person-button action button"`
+
+font is to light and cannot be read, use `### Muted Font`
+
+### 3
+
+`class="material-icons"` which I see under `class="person-button action button"`
+
+Icon colours are to light 
+
+should match File browser icons:
+
+icon forground  `#448388` 
+
+icon background `#eaf2f4`
+
+### 4
+
+search bar font.
+
+see image /home/mem/git/filebrowser/search.png
+
+font colour is to dark, suggest `#ffffff` or something appropiate. I am unsure of this.
+
+### 5
+
+`class="sidebar-links card"`
+
+should be hidden
+
+### 6
 
 ```
-<div class="quick-toggles"><div class="clickable"><i class="material-icons">ads_click</i></div><div aria-label="Toggle Theme" class="clickable"><i class="material-icons">dark_mode</i></div><div class="clickable active"><i class="material-icons">push_pin</i></div></div>
+<button data-v-e94d8d6f="" class="action button action-button" aria-label="New folder"><i data-v-e94d8d6f="" class="material-icons action-icon">create_new_folder</i><span data-v-e94d8d6f="">New folder</span></button>
 ```
 
-class `clickable` when not enabled / toggled on the background colour is to light.
-
-it should be `#eaf2f5` (selected using eyedropper plugin)
-
-### Sidebar Actions Menu
-
-should have same CSS style as 
-
-```
-<div data-v-d98731eb="" id="context-menu" 
-```
-
-currently until user hovers over it is all white.
-
-### Hamburger Menu broken
-
-```
-<svg id="button-toggle-navbar" class="ham hamRotate180 ham5" viewBox="0 0 100 100" width="30"><path class="line top" d="M 30,33 H 70"></path><path class="line middle" d="M 30,50 H 70"></path><path class="line bottom" d="M 30,67 H 70"></path></svg>
-```
-
-Hamburger menu should be disabled and hidden.
-
-### Search bar
-
-```
-id="search" 
-```
-
-is not visible until user clicks on it, CSS mismatch.
-
-search dialog popup also has CSS colours mismatch
+Fonts in these buttons should use `### Muted Font`

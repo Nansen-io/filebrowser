@@ -242,6 +242,10 @@ export default {
 </script>
 
 <style scoped>
+:deep(button:has(#button-toggle-navbar)) {
+  display: none;
+}
+
 header button:hover {
   box-shadow: unset !important;
   -webkit-box-shadow: unset !important;

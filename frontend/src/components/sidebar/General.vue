@@ -363,7 +363,7 @@ export default {
 
 .quick-toggles div {
   border-radius: 10em;
-  background-color: var(--iconBackground);
+  background-color: #eaf2f5;
 }
 
 .quick-toggles div i {
@@ -371,6 +371,10 @@ export default {
   padding: 0.25em;
   border-radius: 10em;
   cursor: pointer;
+  color: var(--primaryColor);
+}
+
+.quick-toggles .active i {
   color: white;
 }
 

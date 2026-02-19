@@ -595,7 +595,7 @@ export default {
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   box-shadow: 0px 2em 50px 10px rgba(0, 0, 0, 0.3);
-  background-color: lightgray;
+  background-color: var(--background);
   max-height: 80vh;
   overflow: hidden;
   display: flex;
@@ -638,7 +638,7 @@ export default {
 }
 
 #search-input {
-  background-color: rgba(100, 100, 100, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   display: flex;
   height: 100%;
   padding: 0em 0.75em;
