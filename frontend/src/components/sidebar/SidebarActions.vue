@@ -181,9 +181,9 @@ export default {
 }
 
 .action-icon {
-  color: var(--primaryColor);
+  color: white;
   font-size: 1.25em;
-  background-color: #eaf2f4;
+  background-color: #50898e;
   padding: 0.3em;
   border-radius: 0.4em;
 }

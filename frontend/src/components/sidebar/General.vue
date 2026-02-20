@@ -363,7 +363,7 @@ export default {
 
 .quick-toggles div {
   border-radius: 10em;
-  background-color: #eaf2f5;
+  background-color: #d0e8ea;
 }
 
 .quick-toggles div i {
@@ -414,7 +414,7 @@ button.action {
   padding-right: 1em !important;
   justify-content: center;
   align-items: center;
-  color: #6b7280;
+  color: #50898e;
 }
 
 a.person-button {
@@ -424,23 +424,23 @@ a.person-button {
 
 .person-button .material-icons,
 .person-button .material-symbols-outlined {
-  color: var(--primaryColor);
-  background-color: #eaf2f4;
+  color: white;
+  background-color: #50898e;
   padding: 0.2em;
   border-radius: 0.4em;
 }
 
 .logout-button .material-icons {
-  color: var(--primaryColor);
-  background-color: #eaf2f4;
+  color: white;
+  background-color: #50898e;
   padding: 0.2em;
   border-radius: 0.4em;
 }
 
 .file-actions {
+  display: none;
   padding: 0.25em !important;
   margin-top: 0.5em !important;
-  display: flex !important;
   align-items: center;
   justify-content: center;
 }

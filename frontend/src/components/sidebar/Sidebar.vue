@@ -224,4 +224,9 @@ body.rtl .action {
   color: #f4f8f8 !important;
 }
 
+/* person-button sits on a white card — use teal text, not near-white */
+#sidebar .person-button {
+  color: #50898e !important;
+}
+
 </style>

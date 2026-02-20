@@ -32,7 +32,8 @@
       "Bash(tasklist:*)",
       "Bash(npm run)",
       "Bash(pgrep:*)",
-      "Bash(killall:*)"
+      "Bash(killall:*)",
+      "Bash(claude --version:*)"
     ]
   }
 }
