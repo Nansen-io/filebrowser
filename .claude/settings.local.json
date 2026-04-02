@@ -33,7 +33,12 @@
       "Bash(npm run)",
       "Bash(pgrep:*)",
       "Bash(killall:*)",
-      "Bash(claude --version:*)"
+      "Bash(claude --version:*)",
+      "Bash(npm --version)",
+      "Read(///wsl.localhost/Ubuntu/home/andrew/filebrowser/**)",
+      "Bash(npx vite:*)",
+      "Bash(npm --prefix \"//wsl.localhost/Ubuntu/home/andrew/filebrowser/frontend\" run build)",
+      "Bash(npm --prefix \"//wsl.localhost/Ubuntu/home/andrew/filebrowser/frontend\" run build:windows)"
     ]
   }
 }

@@ -32,7 +32,7 @@ func (t *userAgentTransport) RoundTrip(req *http.Request) (*http.Response, error
 type Auth struct {
 	TokenExpirationHours int          `json:"tokenExpirationHours"` // time in hours each web UI session token is valid for. Default is 2 hours.
 	Methods              LoginMethods `json:"methods"`
-	Key                  string       `json:"key"`           // secret: the key used to sign the JWT tokens. If not set, a random key will be generated.
+	Key                  string       `json:"key" yaml:"key"`           // secret: the key used to sign the JWT tokens. If not set, a random key will be generated.
 	AdminUsername        string       `json:"adminUsername"` // secret: the username of the admin user. If not set, the default is "admin".
 	AdminPassword        string       `json:"adminPassword"` // secret: the password of the admin user. If not set, the default is "admin".
 	TotpSecret           string       `json:"totpSecret"`    // secret: secret used to encrypt TOTP secrets

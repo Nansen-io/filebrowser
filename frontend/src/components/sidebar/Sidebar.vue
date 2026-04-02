@@ -10,23 +10,6 @@
     <SidebarSettings v-if="isSettings"></SidebarSettings>
     <SidebarGeneral v-if="!isSettings"></SidebarGeneral>
     <div class="buffer"></div>
-    <div v-if="!isSettings" class="credits">
-      <span v-for="item in externalLinks" :key="item.title">
-        <a
-          v-if="item.url === 'help prompt'"
-          href="#"
-          @click.prevent="help"
-          :title="$t('general.help')"
-          >{{ $t("general.help") }}</a
-        >
-        <a v-else :href="item.url" target="_blank" :title="item.title">{{
-          item.text
-        }}</a>
-      </span>
-      <span v-if="name != ''">
-        <h4 style="margin: 0">{{ name }}</h4>
-      </span>
-    </div>
   </nav>
 </template>
 
@@ -227,6 +210,30 @@ body.rtl .action {
 /* person-button sits on a white card — use teal text, not near-white */
 #sidebar .person-button {
   color: #50898e !important;
+}
+
+/* settings nav cards are white — use dark text */
+#sidebar .settings-card,
+#sidebar .settings-card .settings-icon {
+  color: #1a2e30 !important;
+}
+
+#sidebar .active-settings,
+#sidebar .active-settings .settings-icon {
+  color: white !important;
+}
+
+/* Concave corner — sits at the junction of sidebar right edge + header bottom */
+#sidebar.active::after {
+  content: '';
+  position: fixed;
+  top: 4em;
+  left: 20em;
+  width: 1em;
+  height: 1em;
+  background: radial-gradient(circle at 100% 100%, transparent 1em, #3a7d82 1em);
+  z-index: 4;
+  pointer-events: none;
 }
 
 </style>

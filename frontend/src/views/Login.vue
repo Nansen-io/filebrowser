@@ -22,10 +22,16 @@
 
     <form class="card login-card" :class="{ 'tombstone': eventTheme === 'halloween' }" @submit="submit">
       <div class="login-brand">
-        <img :src="loginIconUrl" alt="Login Icon" class="login-icon" />
-      </div>
-      <div v-if="!inProgress" class="login-brand brand-text">
-        <h3>{{ loginName }}</h3>
+        <div class="acornai-logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" class="acorn-logo-icon">
+            <rect x="43" y="3" width="14" height="15" rx="1" fill="#3d9ea0"/>
+            <path d="M12,48 L12,33 Q12,18 50,18 Q88,18 88,33 L88,48 Z" fill="#3d9ea0"/>
+            <path d="M12,56 L88,56 Q90,78 68,92 Q58,100 50,103 Q42,100 32,92 Q10,78 12,56 Z" fill="#3d9ea0"/>
+          </svg>
+          <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
+          <div class="acornai-wordmark"><span class="acorn-text">acorn</span><span class="ai-text">AI</span></div>
+          <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
+        </div>
       </div>
       <transition name="login-options" @before-enter="beforeEnter" @enter="enter" @leave="leave">
         <div v-if="inProgress" class="loading-spinner">
@@ -64,7 +70,11 @@
             <div v-if="passwordAvailable || oidcAvailable" class="or">{{ $t("login.or") }}</div>
             <a :href="chainfsLoginURL" class="button button--block direct-login">
               <!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
-              ChainFS Login
+              Login
+            </a>
+            <a href="https://acorn.tools" class="create-account-link" target="_blank" rel="noopener noreferrer">
+              <!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
+              Create an Account
             </a>
           </div>
         </div>
@@ -396,34 +406,49 @@ export default {
 }
 
 .login-card {
-  padding: 1em;
+  padding: 1.5em 1.5em 1.25em;
+  border: none;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
 }
 
 .login-brand {
-  padding-bottom: 0 !important;
-  padding: 0em !important;
-  padding-top: 0.5em !important;
+  padding: 0.75em 0 0.5em !important;
   display: flex;
   align-content: center;
   justify-content: center;
   align-items: center;
 }
 
-.brand-text {
-  padding: 1em !important;
-  padding-top: 0.9em !important;
+.acornai-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35em;
 }
 
-.login-brand i {
-  font-size: 5em !important;
-  padding-top: 0em !important;
-  padding-bottom: 0em !important;
-}
-
-.login-icon {
+.acorn-logo-icon {
   width: 5em;
   height: 5em;
-  object-fit: contain;
+}
+
+.acornai-wordmark {
+  font-size: 2.2em;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.acorn-text {
+  color: #3d9ea0;
+}
+
+.ai-text {
+  color: #163535;
+}
+
+.dark-mode .ai-text {
+  color: #a8d8da;
 }
 
 .password-entry {
@@ -512,8 +537,9 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 16em;
+  max-width: 26em;
   width: 90%;
+  font-size: 1.4em;
 }
 
 #login.recaptcha form {
@@ -550,6 +576,23 @@ export default {
   font-weight: 500;
   font-size: 0.9rem;
   margin: .5rem 0;
+}
+
+.create-account-link {
+  display: block;
+  text-align: center;
+  color: var(--primaryColor);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.6rem;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.create-account-link:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 </style>

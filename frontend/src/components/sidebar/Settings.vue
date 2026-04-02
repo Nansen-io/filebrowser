@@ -60,12 +60,21 @@ export default {
   color: white !important;
 }
 
+.active-settings .settings-icon {
+  color: white !important;
+}
+
 .settings-card {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: unset !important;
-  padding: 1em;
+  padding: 0.75em 1em;
+}
+
+#sidebar .settings-card,
+#sidebar .settings-card .settings-icon {
+  color: #1a2e30 !important;
 }
 
 .settings-item-content {

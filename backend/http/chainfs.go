@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -420,12 +421,15 @@ func extractGroups(claims map[string]interface{}, claimName string) []string {
 	return []string{}
 }
 
+// deriveEncryptionKey derives a 32-byte AES key from the configured auth key using SHA-256.
+func deriveEncryptionKey() []byte {
+	h := sha256.Sum256([]byte(settings.Config.Auth.Key))
+	return h[:]
+}
+
 // encryptToken encrypts a token using AES-GCM
 func encryptToken(token string) (string, error) {
-	key := []byte(settings.Config.Auth.Key)
-	if len(key) != 32 {
-		return "", fmt.Errorf("invalid encryption key length: must be 32 bytes")
-	}
+	key := deriveEncryptionKey()
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -448,10 +452,7 @@ func encryptToken(token string) (string, error) {
 
 // decryptToken decrypts a token using AES-GCM
 func decryptToken(encryptedToken string) (string, error) {
-	key := []byte(settings.Config.Auth.Key)
-	if len(key) != 32 {
-		return "", fmt.Errorf("invalid encryption key length: must be 32 bytes")
-	}
+	key := deriveEncryptionKey()
 
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedToken)
 	if err != nil {

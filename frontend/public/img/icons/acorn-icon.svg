@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110">
+  <!-- Stem -->
+  <rect x="43" y="3" width="14" height="15" rx="1" fill="#3d9ea0"/>
+  <!-- Cap (dome) -->
+  <path d="M12,48 L12,33 Q12,18 50,18 Q88,18 88,33 L88,48 Z" fill="#3d9ea0"/>
+  <!-- Body -->
+  <path d="M12,56 L88,56 Q90,78 68,92 Q58,100 50,103 Q42,100 32,92 Q10,78 12,56 Z" fill="#3d9ea0"/>
+</svg>

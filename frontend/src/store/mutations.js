@@ -263,7 +263,7 @@ export const mutations = {
         confirm: () => {
           // User confirmed to close anyway - force close all hovers
           state.prompts = [];
-          if (!state.stickySidebar) {
+          if (!getters.isStickySidebar()) {
             state.showSidebar = false;
           }
           emitStateChanged();
@@ -277,7 +277,7 @@ export const mutations = {
     }
     // Normal close behavior
     state.prompts = [];
-    if (!state.stickySidebar) {
+    if (!getters.isStickySidebar()) {
       state.showSidebar = false;
     }
     mutations.hideTooltip(true)
@@ -285,7 +285,7 @@ export const mutations = {
   closeTopHover: () => {
     state.prompts.pop();
     if (state.prompts.length === 0) {
-      if (!state.stickySidebar) {
+      if (!getters.isStickySidebar()) {
         state.showSidebar = false;
       }
     }

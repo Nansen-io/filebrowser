@@ -302,6 +302,10 @@ export default {
       return null; // Return null if there are no files
     },
     numColumns() {
+      const viewMode = getters.viewMode();
+      if (viewMode === 'list' || viewMode === 'compact') {
+        return 1;
+      }
       if (!getters.isCardView()) {
         return 1;
       }
@@ -309,7 +313,7 @@ export default {
       if (!elem) {
         return 1;
       }
-      if (getters.viewMode() === 'icons') {
+      if (viewMode === 'icons') {
         const containerSize = 70 + (state.user.gallerySize * 15); // 85px to 190px range
         let columns = Math.floor(elem.offsetWidth / containerSize);
         if (columns === 0) columns = 1;

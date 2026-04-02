@@ -1,32 +1,27 @@
 <template>
   <div class="card headline-card">
     <div class="card-wrapper user-card">
-      <div v-if="settingsAllowed" class="inner-card">
-        <a href="/settings#profile-main" class="person-button action button"
-          @click.prevent="navigateTo('/settings', '#profile-main')"
-          @mouseenter="showTooltip($event, $t('index.settingsHover'))" @mouseleave="hideTooltip">
-          <i class="material-icons">person</i>
-          {{ user.username }}
-          <i aria-label="settings" class="material-icons">settings</i>
-        </a>
+      <div v-if="settingsAllowed" class="user-icon-item"
+        @click.prevent="navigateTo('/settings', '#profile-main')"
+        @mouseenter="showTooltip($event, $t('index.settingsHover'))" @mouseleave="hideTooltip">
+        <i class="material-icons">person</i>
       </div>
-      <div v-else-if="user.username === 'anonymous'" @click="navigateToLogin" class="inner-card">
-        <button class="person-button action button">
-          <i class="material-symbols-outlined">login</i> {{ $t("general.login") }}
-        </button>
+      <div v-else-if="user.username === 'anonymous'" class="user-icon-item" @click="navigateToLogin">
+        <i class="material-symbols-outlined">login</i>
       </div>
-      <div v-else class="inner-card">
-        <button class="person-button action button">
-          <i class="material-icons">person</i>
-          {{ user.username }}
-        </button>
+      <div v-else class="user-icon-item">
+        <i class="material-icons">person</i>
       </div>
 
-      <div class="inner-card" v-if="canLogout" @click="logout">
-        <button aria-label="logout-button" class="logout-button action button"
-          @mouseenter="showTooltip($event, $t('general.logout'))" @mouseleave="hideTooltip">
-          <i class="material-icons">exit_to_app</i>
-        </button>
+      <div v-if="settingsAllowed" class="user-icon-item"
+        @click.prevent="navigateTo('/settings', '#profile-main')"
+        @mouseenter="showTooltip($event, $t('index.settingsHover'))" @mouseleave="hideTooltip">
+        <i class="material-icons">settings</i>
+      </div>
+
+      <div class="user-icon-item logout-icon" v-if="canLogout" @click="logout"
+        @mouseenter="showTooltip($event, $t('general.logout'))" @mouseleave="hideTooltip">
+        <i class="material-icons">exit_to_app</i>
       </div>
     </div>
 
@@ -41,9 +36,9 @@
           @mouseenter="showTooltip($event, $t('index.toggleDark'))" @mouseleave="hideTooltip">
           <i class="material-icons">dark_mode</i>
         </div>
-        <div class="clickable" :class="{ active: isStickySidebar }" @click="toggleSticky"
-          @mouseenter="showTooltip($event, $t('index.toggleSticky'))" @mouseleave="hideTooltip" v-if="!isMobile">
-          <i class="material-icons">push_pin</i>
+        <div class="clickable" @click="help"
+          @mouseenter="showTooltip($event, $t('general.help'))" @mouseleave="hideTooltip">
+          <i class="material-icons">help_outline</i>
         </div>
       </div>
     </div>
@@ -321,8 +316,31 @@ export default {
 <style>
 .user-card {
   flex-direction: row !important;
-  justify-content: space-between !important;
+  justify-content: space-evenly !important;
+  width: 100%;
   color: var(--textPrimary);
+}
+
+.user-icon-item {
+  border-radius: 10em;
+  background-color: #d0e8ea;
+  cursor: pointer;
+}
+
+.user-icon-item i {
+  font-size: 2em;
+  padding: 0.25em;
+  border-radius: 10em;
+  display: block;
+  color: var(--primaryColor);
+}
+
+.logout-icon {
+  background-color: #c0392b;
+}
+
+.logout-icon i {
+  color: white;
 }
 
 .quick-toggles {
@@ -408,34 +426,6 @@ button.action {
   padding: 1em;
 }
 
-.person-button {
-  max-width: 13em;
-  display: flex;
-  padding-right: 1em !important;
-  justify-content: center;
-  align-items: center;
-  color: #50898e;
-}
-
-a.person-button {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.person-button .material-icons,
-.person-button .material-symbols-outlined {
-  color: white;
-  background-color: #50898e;
-  padding: 0.2em;
-  border-radius: 0.4em;
-}
-
-.logout-button .material-icons {
-  color: white;
-  background-color: #50898e;
-  padding: 0.2em;
-  border-radius: 0.4em;
-}
 
 .file-actions {
   display: none;

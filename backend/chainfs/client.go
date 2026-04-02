@@ -12,7 +12,7 @@ func GetLoginUrl(baseUrl string) (string, error) {
 	endpoint := fmt.Sprintf("%s/api/NansenFile/LoginURL", baseUrl)
 
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 60 * time.Second,
 	}
 
 	resp, err := client.Get(endpoint)
@@ -38,7 +38,7 @@ func GetLogoutUrl(baseUrl string) (string, error) {
 	endpoint := fmt.Sprintf("%s/api/NansenFile/LogoutURL", baseUrl)
 
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 60 * time.Second,
 	}
 
 	resp, err := client.Get(endpoint)
