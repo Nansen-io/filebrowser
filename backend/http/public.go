@@ -12,6 +12,7 @@ import (
 	"github.com/gtsteffaniak/filebrowser/backend/common/errors"
 	"github.com/gtsteffaniak/filebrowser/backend/common/settings"
 	"github.com/gtsteffaniak/filebrowser/backend/common/utils"
+	"github.com/gtsteffaniak/filebrowser/backend/common/version"
 	"github.com/gtsteffaniak/filebrowser/backend/indexing"
 	"github.com/gtsteffaniak/filebrowser/backend/preview"
 	"github.com/gtsteffaniak/go-logger/logger"
@@ -200,8 +201,12 @@ func publicUploadHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 // @Router /health [get]
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	response := HttpResponse{Message: "ok"}    // Create response with status "ok"
-	err := json.NewEncoder(w).Encode(response) // Encode the response into JSON
+	w.Header().Set("Cache-Control", "no-store")
+	response := map[string]string{
+		"status":  "ok",
+		"version": version.Version,
+	}
+	err := json.NewEncoder(w).Encode(response)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}

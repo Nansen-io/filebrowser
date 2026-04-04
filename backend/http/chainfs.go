@@ -84,6 +84,16 @@ func chainfsLoginHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 	state := fmt.Sprintf("%s:%s", nonce, fbRedirect)
 	query.Set("state", state)
 
+	// Store nonce in a short-lived cookie for CSRF validation on callback
+	http.SetCookie(w, &http.Cookie{
+		Name:     "chainfs_state_nonce",
+		Value:    nonce,
+		Path:     "/",
+		MaxAge:   300, // 5 minutes
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	parsedUrl.RawQuery = query.Encode()
 
 	// Debug: Log the final URL we're redirecting to
@@ -145,13 +155,31 @@ if (hash) {
 		return 0, nil
 	}
 
+	// Validate state nonce to prevent CSRF attacks
+	if state == "" {
+		return http.StatusBadRequest, fmt.Errorf("missing state parameter")
+	}
+	nonceCookie, nonceCookieErr := r.Cookie("chainfs_state_nonce")
+	if nonceCookieErr != nil {
+		return http.StatusBadRequest, fmt.Errorf("missing state nonce cookie — possible CSRF attack")
+	}
+	stateParts := strings.SplitN(state, ":", 2)
+	if stateParts[0] != nonceCookie.Value {
+		return http.StatusBadRequest, fmt.Errorf("state nonce mismatch — possible CSRF attack")
+	}
+	// Clear the nonce cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "chainfs_state_nonce",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+	})
+
 	// Parse state to extract redirect path
 	var fbRedirect string
-	if state != "" {
-		parts := strings.SplitN(state, ":", 2)
-		if len(parts) == 2 {
-			fbRedirect = parts[1]
-		}
+	if len(stateParts) == 2 {
+		fbRedirect = stateParts[1]
 	}
 
 	// Get the Azure login URL to extract OAuth2 endpoints
@@ -249,6 +277,20 @@ if (hash) {
 func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username string, isAdmin bool, accessToken, refreshToken string, expiresAt int64, redirect string) (int, error) {
 	chainfsConfig := settings.Config.Auth.Methods.ChainFsAuth
 
+	// Check subscription — must have Enhanced or Enterprise tier to access acorndrive
+	userInfo, err := chainfs.GetUserInfo(chainfsConfig.ApiBaseUrl, accessToken)
+	if err != nil {
+		logger.Infof("Could not fetch ChainFS subscription status for %s: %v", username, err)
+		return http.StatusServiceUnavailable, fmt.Errorf("could not verify subscription status, please try again")
+	}
+	subscribed := userInfo.Subscribed || userInfo.EnhancedSubscription
+	logger.Infof("ChainFS subscription for %s: subscribed=%v enhanced=%v enterprise=%v — access=%v", username, userInfo.Subscribed, userInfo.EnhancedSubscription, userInfo.IsEnterprise, subscribed)
+	if !subscribed {
+		loginURL := fmt.Sprintf("%slogin?error=subscription", config.Server.BaseURL)
+		http.Redirect(w, r, loginURL, http.StatusFound)
+		return 0, nil
+	}
+
 	// Get or create user
 	user, err := store.Users.Get(username)
 	if err != nil {
@@ -286,6 +328,7 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		user.AzureAccessToken = encryptedAccess
 		user.AzureRefreshToken = encryptedRefresh
 		user.AzureTokenExpiry = expiresAt
+		user.ChainFSSubscribed = subscribed
 
 		err = storage.CreateUser(*user, user.Permissions)
 		if err != nil {
@@ -319,12 +362,13 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		user.AzureRefreshToken = encryptedRefresh
 		user.AzureTokenExpiry = expiresAt
 		user.LoginMethod = users.LoginMethodChainFs
+		user.ChainFSSubscribed = subscribed
 
 		if isAdmin {
 			user.Permissions.Admin = true
 		}
 
-		if err := store.Users.Update(user, true, "AzureAccessToken", "AzureRefreshToken", "AzureTokenExpiry", "LoginMethod", "Permissions"); err != nil {
+		if err := store.Users.Update(user, true, "AzureAccessToken", "AzureRefreshToken", "AzureTokenExpiry", "LoginMethod", "Permissions", "ChainFSSubscribed"); err != nil {
 			logger.Errorf("Failed to update user: %v", err)
 			return http.StatusInternalServerError, err
 		}

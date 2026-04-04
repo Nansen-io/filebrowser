@@ -75,9 +75,10 @@ type User struct {
 	TOTPNonce         string               `json:"totpNonce,omitempty"`
 	LoginMethod       LoginMethod          `json:"loginMethod"`
 	OtpEnabled        bool                 `json:"otpEnabled"` // true if TOTP is enabled, false otherwise
-	AzureAccessToken  string               `json:"azureAccessToken,omitempty"`  // Azure AD B2C access token (encrypted)
-	AzureRefreshToken string               `json:"azureRefreshToken,omitempty"` // Azure AD B2C refresh token (encrypted)
-	AzureTokenExpiry  int64                `json:"azureTokenExpiry,omitempty"`  // Token expiration time (Unix timestamp)
+	AzureAccessToken    string               `json:"azureAccessToken,omitempty"`    // Azure AD B2C access token (encrypted)
+	AzureRefreshToken   string               `json:"azureRefreshToken,omitempty"`   // Azure AD B2C refresh token (encrypted)
+	AzureTokenExpiry    int64                `json:"azureTokenExpiry,omitempty"`    // Token expiration time (Unix timestamp)
+	ChainFSSubscribed   bool                 `json:"chainfsSubscribed"`             // whether the user has an active ChainFS subscription
 	// legacy for migration purposes... og filebrowser has perm attribute
 	Perm           Permissions `json:"perm,omitzero"`
 	Version        int         `json:"version"`

@@ -107,10 +107,19 @@ func (l *Link) InitUserDownloads() {
 	}
 }
 
-// IncrementUserDownload increments the download count for a specific user
+// IncrementUserDownload increments the download count for a specific user (acquires lock)
 func (l *Link) IncrementUserDownload(username string) {
 	l.Mu.Lock()
 	defer l.Mu.Unlock()
+	if l.UserDownloads == nil {
+		l.UserDownloads = make(map[string]int)
+	}
+	l.UserDownloads[username]++
+}
+
+// IncrementUserDownloadLocked increments the download count for a specific user.
+// Caller must already hold l.Mu.
+func (l *Link) IncrementUserDownloadLocked(username string) {
 	if l.UserDownloads == nil {
 		l.UserDownloads = make(map[string]int)
 	}

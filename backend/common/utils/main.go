@@ -5,13 +5,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	math "math/rand"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/gtsteffaniak/go-logger/logger"
 )
@@ -41,10 +39,16 @@ func CapitalizeFirst(s string) string {
 
 func InsecureRandomIdentifier(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
-	math.New(math.NewSource(time.Now().UnixNano()))
 	result := make([]byte, length)
+	buf := make([]byte, length)
+	if _, err := rand.Read(buf); err != nil {
+		// fallback: return hex-encoded random bytes
+		b := make([]byte, length)
+		_, _ = rand.Read(b)
+		return hex.EncodeToString(b)[:length]
+	}
 	for i := range result {
-		result[i] = charset[math.Intn(len(charset))]
+		result[i] = charset[int(buf[i])%len(charset)]
 	}
 	return string(result)
 }

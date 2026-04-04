@@ -675,7 +675,7 @@ func setDefaults(generate bool) Settings {
 			},
 		},
 		Frontend: Frontend{
-			Name: "FileBrowser Quantum",
+			Name: "AcornDrive",
 		},
 
 		UserDefaults: UserDefaults{

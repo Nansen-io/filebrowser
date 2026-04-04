@@ -89,7 +89,7 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	api.HandleFunc("DELETE /users", withSelfOrAdmin(userDeleteHandler))
 
 	// Auth routes
-	api.HandleFunc("POST /auth/login", userWithoutOTP(loginHandler))
+	api.HandleFunc("POST /auth/login", wrapHandler(withLoginRateLimit(userWithoutOTPhelper(loginHandler))))
 	api.HandleFunc("POST /auth/logout", withOrWithoutUser(logoutHandler))
 	api.HandleFunc("POST /auth/signup", withoutUser(signupHandler))
 	api.HandleFunc("POST /auth/otp/generate", userWithoutOTP(generateOTPHandler))
@@ -103,6 +103,7 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	api.HandleFunc("GET /auth/oidc/login", wrapHandler(oidcLoginHandler))
 	api.HandleFunc("GET /auth/chainfs/callback", wrapHandler(chainfsCallbackHandler))
 	api.HandleFunc("GET /auth/chainfs/login", wrapHandler(chainfsLoginHandler))
+	api.HandleFunc("POST /chainfs/protect", withUser(protectHandler))
 
 	// Resources routes
 	api.HandleFunc("GET /resources", withUser(resourceGetHandler))
@@ -150,6 +151,9 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	publicAPI.HandleFunc("DELETE /resources", withHashFile(publicDeleteHandler))
 	publicAPI.HandleFunc("PATCH /resources", withHashFile(publicPatchHandler))
 	publicAPI.HandleFunc("GET /shareinfo", withOrWithoutUser(shareInfoHandler))
+
+	// Admin routes
+	api.HandleFunc("GET /admin/stats", withAdmin(adminStatsHandler))
 
 	// Settings routes
 	api.HandleFunc("GET /settings", withAdmin(settingsGetHandler))

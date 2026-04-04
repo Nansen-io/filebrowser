@@ -97,6 +97,17 @@ func oidcLoginHandler(w http.ResponseWriter, r *http.Request, d *requestContext)
 	nonce := utils.InsecureRandomIdentifier(16)
 	fbRedirect := r.URL.Query().Get("redirect")
 	state := fmt.Sprintf("%s:%s", nonce, fbRedirect)
+
+	// Store nonce in a short-lived cookie for CSRF validation on callback
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oidc_state_nonce",
+		Value:    nonce,
+		Path:     "/",
+		MaxAge:   300, // 5 minutes
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	authURL := oauth2Config.AuthCodeURL(state)
 	http.Redirect(w, r, authURL, http.StatusFound)
 	return 0, nil
@@ -135,7 +146,28 @@ func oidcCallbackHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 		ctx = oidc.ClientContext(ctx, customClient)
 	}
 	code := r.URL.Query().Get("code")
-	// state := r.URL.Query().Get("state") // You might want to validate the state parameter for CSRF protection
+	state := r.URL.Query().Get("state")
+
+	// Validate state nonce to prevent CSRF attacks
+	if state == "" {
+		return http.StatusBadRequest, fmt.Errorf("missing state parameter")
+	}
+	nonceCookie, err := r.Cookie("oidc_state_nonce")
+	if err != nil {
+		return http.StatusBadRequest, fmt.Errorf("missing state nonce cookie — possible CSRF attack")
+	}
+	stateParts := strings.SplitN(state, ":", 2)
+	if stateParts[0] != nonceCookie.Value {
+		return http.StatusBadRequest, fmt.Errorf("state nonce mismatch — possible CSRF attack")
+	}
+	// Clear the nonce cookie
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oidc_state_nonce",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+	})
 
 	// The redirect URI MUST match the one registered with the OIDC provider
 	// and used in the initial /api/auth/oidc/login handler.
@@ -340,18 +372,9 @@ func loginWithOidcUser(w http.ResponseWriter, r *http.Request, username string, 
 	// or to the root ("/") if no specific redirect was requested.
 	// The 'fb_redirect' parameter is extracted from the 'state' parameter for security.
 	state := r.URL.Query().Get("state")
-
 	fbRedirect := config.Server.BaseURL // Default redirect to the base URL
 	if state != "" {
 		parts := strings.SplitN(state, ":", 2)
-
-		// 2. Validate the nonce
-		// receivedNonce := parts[0]
-		// if receivedNonce != nonceCookie.Value {
-		//    // Handle error: nonce mismatch (possible CSRF attack)
-		//    return http.StatusBadRequest, fmt.Errorf("invalid state nonce")
-		// }
-
 		if len(parts) == 2 && parts[1] != "" {
 			// 3. Prevent Open Redirect vulnerability
 			// Ensure the redirect is to a local path.

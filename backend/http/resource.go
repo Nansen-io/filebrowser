@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gtsteffaniak/filebrowser/backend/adapters/fs/files"
 	"github.com/gtsteffaniak/filebrowser/backend/adapters/fs/fileutils"
@@ -182,6 +183,15 @@ func resourceDeleteHandler(w http.ResponseWriter, r *http.Request, d *requestCon
 	}, store.Access)
 	if err != nil {
 		return errToStatus(err), err
+	}
+
+	// Refuse to delete ChainFS-protected files whose protection period has not expired
+	if IsProtectionActive(fileInfo.RealPath) {
+		expiry, hasExpiry := ProtectionExpiresAt(fileInfo.RealPath)
+		if hasExpiry {
+			return http.StatusForbidden, fmt.Errorf("file is protected until %s and cannot be deleted before then", time.Unix(expiry, 0).UTC().Format(time.RFC3339))
+		}
+		return http.StatusForbidden, fmt.Errorf("file is protected and cannot be deleted")
 	}
 
 	// delete thumbnails
@@ -556,6 +566,15 @@ func resourcePatchHandler(w http.ResponseWriter, r *http.Request, d *requestCont
 	rename := r.URL.Query().Get("rename") == "true"
 	if rename {
 		realDest = addVersionSuffix(realDest)
+	}
+
+	// Refuse to move/rename ChainFS-protected files whose protection period is active
+	if !isSrcDir && IsProtectionActive(realSrc) {
+		expiry, hasExpiry := ProtectionExpiresAt(realSrc)
+		if hasExpiry {
+			return http.StatusForbidden, fmt.Errorf("file is protected until %s and cannot be moved or renamed before then", time.Unix(expiry, 0).UTC().Format(time.RFC3339))
+		}
+		return http.StatusForbidden, fmt.Errorf("file is protected and cannot be moved or renamed")
 	}
 
 	// Validate move/rename operation to prevent circular references

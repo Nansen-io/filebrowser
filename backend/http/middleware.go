@@ -127,11 +127,10 @@ func withHashFileHelper(fn handleFunc) handleFunc {
 		if getContent && file.Content != "" {
 			link.Mu.Lock()
 			link.Downloads++
-			link.Mu.Unlock()
-			// Track per-user download if enabled
 			if link.PerUserDownloadLimit {
-				link.IncrementUserDownload(data.user.Username)
+				link.IncrementUserDownloadLocked(data.user.Username)
 			}
+			link.Mu.Unlock()
 		}
 		file.Path = utils.AddTrailingSlashIfNotExists(path)
 		// Set the file info in the `data` object

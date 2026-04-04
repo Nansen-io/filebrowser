@@ -12,7 +12,7 @@ auth:
     chainfs:
       enabled: true
       apiBaseUrl: "https://nansendev.azurewebsites.net"
-      clientSecret: "YOUR_AZURE_CLIENT_SECRET_HERE"
+      clientSecret: "oMe8Q~2Q0nmGM1zpBG_.WPT5yQseLo1PI6lxCc.N"
       createUser: true
       adminClaim: "roles"
       adminClaimValue: "admin"
