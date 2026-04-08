@@ -168,6 +168,12 @@ export default {
                 );
             }
             if (getters.isShare()) {
+                // If download is disabled, use the preview endpoint (which respects share auth)
+                // instead of the raw download endpoint (which would 403)
+                if (state.shareInfo?.disableDownload) {
+                    const previewPath = url.removeTrailingSlash(state.req.path);
+                    return publicApi.getPreviewURL(previewPath, "original");
+                }
                 return publicApi.getDownloadURL(
                     {
                         path: state.share.subPath,

@@ -30,7 +30,9 @@
     "saveAndExit": "Kaydet ve Çık",
     "keepEditing": "Düzenlemeye Devam Et",
     "closeAnyway": "Her Neyse Kapat",
-    "goToItem": "Öğeye git"
+    "goToItem": "Öğeye git",
+    "protect": "Koru",
+    "protectSuccess": "Dosya korundu ve ChainFS'e kilitlendi"
   },
   "download": {
     "downloadFile": "Dosyayı indir",
@@ -217,7 +219,10 @@
     "renameSuccess": "Öğe başarıyla yeniden adlandırıldı!",
     "newFileSuccess": "Dosya başarıyla oluşturuldu!",
     "newDirSuccess": "Dizin başarıyla oluşturuldu!",
-    "copyToClipboardFailed": "Panoya kopyalanamıyor"
+    "copyToClipboardFailed": "Panoya kopyalanamıyor",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Daha küçük:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "örneğin '/subfolder' - varsayılan için boş",
-    "permissionsHelp": "Kullanıcı izinleri, kullanıcının ne tür eylemler gerçekleştirebileceğine erişimi kontrol eder. Yönetici erişimi, herhangi bir kullanıcının ayarlarının yanı sıra birçok sistem ayarını güncellemek ve değiştirmek için tam kontrol sağlar."
+    "permissionsHelp": "Kullanıcı izinleri, kullanıcının ne tür eylemler gerçekleştirebileceğine erişimi kontrol eder. Yönetici erişimi, herhangi bir kullanıcının ayarlarının yanı sıra birçok sistem ayarını güncellemek ve değiştirmek için tam kontrol sağlar.",
+    "adminDashboard": "Yönetici paneli",
+    "dashUptime": "Çalışma süresi",
+    "dashMemory": "Kullanılan bellek",
+    "dashMemSys": "Sistem belleği",
+    "dashGoroutines": "Goroutine sayısı"
   },
   "sidebar": {
     "siteSettings": "Site ayarları!",
@@ -606,7 +616,8 @@
     "uploading": "Yükleme{suffix}",
     "paused": "Duraklatıldı{suffix}",
     "conflict": "Çatışma{suffix}",
-    "change": "Değişim{suffix}"
+    "change": "Değişim{suffix}",
+    "version": "Sürüm"
   },
   "access": {
     "rules": "Erişim kuralları",

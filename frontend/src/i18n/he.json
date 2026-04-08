@@ -30,7 +30,9 @@
     "saveAndExit": "שמור וצא",
     "keepEditing": "המשך עריכה",
     "closeAnyway": "סגור בכל מקרה",
-    "goToItem": "עבור לפריט"
+    "goToItem": "עבור לפריט",
+    "protect": "הגן",
+    "protectSuccess": "הקובץ הוגן ונעול ב-ChainFS"
   },
   "download": {
     "downloadFile": "הורד קובץ",
@@ -217,7 +219,10 @@
     "renameSuccess": "הפריט שונה בהצלחה!",
     "newFileSuccess": "הקובץ נוצר בהצלחה!",
     "newDirSuccess": "הספרייה נוצרה בהצלחה!",
-    "copyToClipboardFailed": "לא ניתן להעתיק ללוח"
+    "copyToClipboardFailed": "לא ניתן להעתיק ללוח",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "קטן מ:",
@@ -325,7 +330,12 @@
       "proxy": "פרוקסי"
     },
     "newUserHintSubFolder": "לדוגמה, '/subfolder' - ריק עבור ברירת המחדל",
-    "permissionsHelp": "הרשאות המשתמש שולטות בגישה לסוגי הפעולות שהמשתמש יכול לבצע. גישה לניהול מעניקה שליטה מלאה לעדכון ולשינוי הגדרות המשתמש, כמו גם הגדרות רבות של המערכת."
+    "permissionsHelp": "הרשאות המשתמש שולטות בגישה לסוגי הפעולות שהמשתמש יכול לבצע. גישה לניהול מעניקה שליטה מלאה לעדכון ולשינוי הגדרות המשתמש, כמו גם הגדרות רבות של המערכת.",
+    "adminDashboard": "לוח ניהול",
+    "dashUptime": "זמן פעילות",
+    "dashMemory": "זיכרון בשימוש",
+    "dashMemSys": "זיכרון מערכת",
+    "dashGoroutines": "גורוטינות"
   },
   "sidebar": {
     "siteSettings": "הגדרות",
@@ -606,7 +616,8 @@
     "uploading": "העלאה{suffix}",
     "paused": "בהשהיה{suffix}",
     "conflict": "סכסוך{suffix}",
-    "change": "שינוי{suffix}"
+    "change": "שינוי{suffix}",
+    "version": "גרסה"
   },
   "access": {
     "rules": "כללי גישה",

@@ -30,7 +30,9 @@
     "saveAndExit": "Zapisz i wyjdź",
     "keepEditing": "Kontynuuj edycję",
     "closeAnyway": "W każdym razie blisko",
-    "goToItem": "Przejdź do pozycji"
+    "goToItem": "Przejdź do pozycji",
+    "protect": "Chroń",
+    "protectSuccess": "Plik chroniony i zablokowany w ChainFS"
   },
   "download": {
     "downloadFile": "Pobierz plik",
@@ -217,7 +219,10 @@
     "renameSuccess": "Nazwa elementu została zmieniona pomyślnie!",
     "newFileSuccess": "Plik został utworzony pomyślnie!",
     "newDirSuccess": "Katalog utworzony pomyślnie!",
-    "copyToClipboardFailed": "Nie można skopiować do schowka"
+    "copyToClipboardFailed": "Nie można skopiować do schowka",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Mniejszy niż:",
@@ -325,7 +330,12 @@
       "proxy": "Pełnomocnik"
     },
     "newUserHintSubFolder": "np. '/subfolder' - domyślnie puste",
-    "permissionsHelp": "Uprawnienia użytkownika kontrolują dostęp do rodzaju działań, które użytkownik może wykonywać. Dostęp administratora daje pełną kontrolę nad aktualizacją i zmianą ustawień dowolnego użytkownika, a także wielu ustawień systemowych."
+    "permissionsHelp": "Uprawnienia użytkownika kontrolują dostęp do rodzaju działań, które użytkownik może wykonywać. Dostęp administratora daje pełną kontrolę nad aktualizacją i zmianą ustawień dowolnego użytkownika, a także wielu ustawień systemowych.",
+    "adminDashboard": "Panel administracyjny",
+    "dashUptime": "Czas działania",
+    "dashMemory": "Używana pamięć",
+    "dashMemSys": "Pamięć systemowa",
+    "dashGoroutines": "Goroutiny"
   },
   "sidebar": {
     "siteSettings": "Ustawienia Strony",
@@ -606,7 +616,8 @@
     "uploading": "Przesyłanie{suffix}",
     "paused": "Wstrzymane{suffix}",
     "conflict": "Konflikt{suffix}",
-    "change": "Zmiana{suffix}"
+    "change": "Zmiana{suffix}",
+    "version": "Wersja"
   },
   "access": {
     "rules": "Zasady dostępu",

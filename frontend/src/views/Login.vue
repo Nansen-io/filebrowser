@@ -22,16 +22,9 @@
 
     <form class="card login-card" :class="{ 'tombstone': eventTheme === 'halloween' }" @submit="submit">
       <div class="login-brand">
-        <div class="acornai-logo">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" class="acorn-logo-icon">
-            <rect x="43" y="3" width="14" height="15" rx="1" fill="#3d9ea0"/>
-            <path d="M12,48 L12,33 Q12,18 50,18 Q88,18 88,33 L88,48 Z" fill="#3d9ea0"/>
-            <path d="M12,56 L88,56 Q90,78 68,92 Q58,100 50,103 Q42,100 32,92 Q10,78 12,56 Z" fill="#3d9ea0"/>
-          </svg>
-          <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
-          <div class="acornai-wordmark"><span class="acorn-text">acorn</span><span class="ai-text">AI</span></div>
-          <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
-        </div>
+        <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
+        <img :src="staticBase + 'img/icons/acorndrive-logo.png'" class="acorndrive-logo" alt="acorndrive" />
+        <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
       </div>
       <transition name="login-options" @before-enter="beforeEnter" @enter="enter" @leave="leave">
         <div v-if="inProgress" class="loading-spinner">
@@ -68,6 +61,12 @@
           </div>
           <div v-if="chainfsAvailable" class="password-entry">
             <div v-if="passwordAvailable || oidcAvailable" class="or">{{ $t("login.or") }}</div>
+            <div v-if="subscriptionError" class="subscription-error card">
+              <!-- eslint-disable @intlify/vue-i18n/no-raw-text -->
+              <p>An active <strong>acornDrive</strong> subscription is required to access acornDrive</p>
+              <a href="https://www.acorn.tools/subscription" target="_blank" rel="noopener noreferrer" class="upgrade-link">Upgrade at acorn.tools</a>
+              <!-- eslint-enable @intlify/vue-i18n/no-raw-text -->
+            </div>
             <a :href="chainfsLoginURL" class="button button--block direct-login">
               <!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
               Login
@@ -238,6 +237,9 @@ export default {
     isDarkMode() {
       return globalVars.darkMode;
     },
+    staticBase() {
+      return globalVars.baseURL + 'public/static/';
+    },
     loginName() {
       return name;
     },
@@ -253,6 +255,7 @@ export default {
       loginURL: globalVars.baseURL + "api/auth/oidc/login",
       chainfsLoginURL: globalVars.baseURL + "api/auth/chainfs/login",
       inProgress: false,
+      subscriptionError: new URLSearchParams(window.location.search).get('error') === 'subscription',
     };
   },
   mounted() {
@@ -328,7 +331,7 @@ export default {
 
       let captcha = "";
       if (globalVars.recaptcha) {
-        captcha = window.gglobalVars.recaptcha.getResponse();
+        captcha = window.globalVars.recaptcha.getResponse();
         if (captcha === "") {
           this.error = this.$t("login.wrongCredentials");
           this.inProgress = false;
@@ -419,36 +422,9 @@ export default {
   align-items: center;
 }
 
-.acornai-logo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35em;
-}
-
-.acorn-logo-icon {
-  width: 5em;
-  height: 5em;
-}
-
-.acornai-wordmark {
-  font-size: 2.2em;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.acorn-text {
-  color: #3d9ea0;
-}
-
-.ai-text {
-  color: #163535;
-}
-
-.dark-mode .ai-text {
-  color: #a8d8da;
+.acorndrive-logo {
+  width: 12em;
+  height: auto;
 }
 
 .password-entry {
@@ -524,6 +500,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: #ffffff;
 }
 
 #login h1 {
@@ -576,6 +553,34 @@ export default {
   font-weight: 500;
   font-size: 0.9rem;
   margin: .5rem 0;
+}
+
+#login .subscription-error p {
+  text-transform: none;
+  cursor: default;
+  text-align: center;
+  color: #fff;
+  font-weight: normal;
+  font-size: 0.9em;
+  margin: 0 0 0.4em;
+}
+
+.subscription-error {
+  background: var(--red) !important;
+  color: #fff;
+  padding: 0.75em 1em;
+  border-radius: 0.5em;
+  margin-bottom: 0.75em;
+  text-align: center;
+  animation: .2s opac forwards;
+}
+
+
+.upgrade-link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 0.9em;
 }
 
 .create-account-link {

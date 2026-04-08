@@ -8,7 +8,7 @@
       @action="multiAction"
     />
     <search v-if="showSearch" />
-    <title v-else class="topTitle">{{ getTopTitle }}</title>
+    <title v-else class="topTitle" :class="{ 'topTitle--settings': isSettings }">{{ getTopTitle }}</title>
     <action
       v-if="isListingView && !disableNavButtons"
       class="menu-button"
@@ -19,7 +19,7 @@
     />
     <action
       class="overflow-menu-button"
-      v-else-if="!isListingView && !showQuickSave"
+      v-else-if="!isListingView && !showQuickSave && !isSettings"
       :icon="iconName"
       :disabled="noItems"
       @click="toggleOverflow"
@@ -242,6 +242,11 @@ export default {
 </script>
 
 <style scoped>
+.topTitle--settings {
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
 :deep(button:has(#button-toggle-navbar)) {
   display: none;
 }

@@ -30,7 +30,9 @@
     "saveAndExit": "Salvare e uscire",
     "keepEditing": "Continuare a modificare",
     "closeAnyway": "Chiudere comunque",
-    "goToItem": "Vai all'articolo"
+    "goToItem": "Vai all'articolo",
+    "protect": "Proteggi",
+    "protectSuccess": "File protetto e bloccato su ChainFS"
   },
   "download": {
     "downloadFile": "Scarica file",
@@ -217,7 +219,10 @@
     "renameSuccess": "Articolo rinominato con successo!",
     "newFileSuccess": "File creato con successo!",
     "newDirSuccess": "Directory creata con successo!",
-    "copyToClipboardFailed": "Impossibile copiare negli appunti"
+    "copyToClipboardFailed": "Impossibile copiare negli appunti",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Più piccolo di:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "es. '/sottocartella' - vuoto per l'impostazione predefinita",
-    "permissionsHelp": "I permessi utente controllano l'accesso al tipo di azioni che l'utente può eseguire. L'accesso dell'amministratore consente di aggiornare e modificare le impostazioni di qualsiasi utente e molte impostazioni del sistema."
+    "permissionsHelp": "I permessi utente controllano l'accesso al tipo di azioni che l'utente può eseguire. L'accesso dell'amministratore consente di aggiornare e modificare le impostazioni di qualsiasi utente e molte impostazioni del sistema.",
+    "adminDashboard": "Dashboard admin",
+    "dashUptime": "Uptime",
+    "dashMemory": "Memoria usata",
+    "dashMemSys": "Memoria di sistema",
+    "dashGoroutines": "Goroutine"
   },
   "sidebar": {
     "siteSettings": "Impostazioni del sito",
@@ -606,7 +616,8 @@
     "uploading": "Caricamento{suffix}",
     "paused": "In pausa{suffix}",
     "conflict": "Conflitto{suffix}",
-    "change": "Cambiamento{suffix}"
+    "change": "Cambiamento{suffix}",
+    "version": "Versione"
   },
   "access": {
     "rules": "Regole di accesso",

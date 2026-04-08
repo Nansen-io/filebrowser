@@ -30,7 +30,9 @@
     "saveAndExit": "Guardar e sair",
     "keepEditing": "Continuar a editar",
     "closeAnyway": "Fechar de qualquer maneira",
-    "goToItem": "Ir para o item"
+    "goToItem": "Ir para o item",
+    "protect": "Proteger",
+    "protectSuccess": "Ficheiro protegido e bloqueado no ChainFS"
   },
   "download": {
     "downloadFile": "Descarregar ficheiro",
@@ -217,7 +219,10 @@
     "renameSuccess": "Item renomeado com sucesso!",
     "newFileSuccess": "Ficheiro criado com sucesso!",
     "newDirSuccess": "Diretório criado com sucesso!",
-    "copyToClipboardFailed": "Não é possível copiar para a área de transferência"
+    "copyToClipboardFailed": "Não é possível copiar para a área de transferência",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Mais pequeno do que:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "por exemplo, '/subpasta' - em branco por defeito",
-    "permissionsHelp": "As permissões de utilizador controlam o acesso ao tipo de acções que o utilizador pode executar. O acesso de administrador dá controlo total para atualizar e alterar as definições de qualquer utilizador, bem como muitas definições do sistema."
+    "permissionsHelp": "As permissões de utilizador controlam o acesso ao tipo de acções que o utilizador pode executar. O acesso de administrador dá controlo total para atualizar e alterar as definições de qualquer utilizador, bem como muitas definições do sistema.",
+    "adminDashboard": "Painel de administração",
+    "dashUptime": "Tempo ativo",
+    "dashMemory": "Memória usada",
+    "dashMemSys": "Memória do sistema",
+    "dashGoroutines": "Goroutines"
   },
   "sidebar": {
     "siteSettings": "Configurações do site",
@@ -684,7 +694,8 @@
     "uploading": "Carregamento{suffix}",
     "paused": "Em pausa{suffix}",
     "conflict": "Conflito{suffix}",
-    "change": "Alterar{suffix}"
+    "change": "Alterar{suffix}",
+    "version": "Versão"
   },
   "access": {
     "rules": "Regras de acesso",

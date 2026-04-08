@@ -30,7 +30,9 @@
     "saveAndExit": "保存して終了する",
     "keepEditing": "編集を続ける",
     "closeAnyway": "とにかく閉じる",
-    "goToItem": "アイテムへ"
+    "goToItem": "アイテムへ",
+    "protect": "保護する",
+    "protectSuccess": "ファイルがChainFSに保護・ロックされました"
   },
   "download": {
     "downloadFile": "ファイルをダウンロード",
@@ -217,7 +219,10 @@
     "renameSuccess": "アイテム名の変更に成功しました！",
     "newFileSuccess": "ファイルは正常に作成されました！",
     "newDirSuccess": "ディレクトリは正常に作成されました！",
-    "copyToClipboardFailed": "クリップボードにコピーできない"
+    "copyToClipboardFailed": "クリップボードにコピーできない",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "より小さい：",
@@ -325,7 +330,12 @@
       "proxy": "プロキシ"
     },
     "newUserHintSubFolder": "例 '/subfolder' - デフォルトは空白",
-    "permissionsHelp": "ユーザー権限は、ユーザーが実行できるアクションの種類へのアクセスを制御します。管理者アクセスは、多くのシステム設定だけでなく、任意のユーザーの設定を更新および変更するための完全なコントロールを提供します。"
+    "permissionsHelp": "ユーザー権限は、ユーザーが実行できるアクションの種類へのアクセスを制御します。管理者アクセスは、多くのシステム設定だけでなく、任意のユーザーの設定を更新および変更するための完全なコントロールを提供します。",
+    "adminDashboard": "管理ダッシュボード",
+    "dashUptime": "稼働時間",
+    "dashMemory": "使用メモリ",
+    "dashMemSys": "システムメモリ",
+    "dashGoroutines": "ゴルーチン数"
   },
   "sidebar": {
     "siteSettings": "サイト設定",
@@ -606,7 +616,8 @@
     "uploading": "アップロード{suffix}",
     "paused": "休止{suffix}",
     "conflict": "紛争{suffix}",
-    "change": "変更{suffix}"
+    "change": "変更{suffix}",
+    "version": "バージョン"
   },
   "access": {
     "rules": "アクセスルール",

@@ -349,7 +349,7 @@ export default {
 
 .sidebar-links {
   display: none;
-  padding: 1em;
+  padding: 0.7em;
   overflow: auto;
   min-height: 5em;
 }
@@ -371,10 +371,10 @@ export default {
 .sidebar-links-header {
   display: flex;
   justify-content: space-between;
-  padding: .25em;
+  padding: .18em;
   padding-top: 0 !important;
   align-items: center;
-  gap: 1em;
+  gap: 0.7em;
 }
 
 .sidebar-links-header span {
@@ -390,7 +390,7 @@ export default {
 /* Non-source link styles (tools, custom) */
 .sidebar-link-button {
   margin: 0;
-  margin-top: 0.25em;
+  margin-top: 0.18em;
   padding: 0;
   border-radius: 0.5em;
 }
@@ -455,7 +455,7 @@ a.sidebar-link-button {
 
 
 .source-button {
-  margin-top: 0.5em !important;
+  margin-top: 0.35em !important;
 }
 
 .source-button.active {

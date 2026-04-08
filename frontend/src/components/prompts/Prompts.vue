@@ -49,6 +49,7 @@ import CopyPasteConfirm from "./CopyPasteConfirm.vue";
 import CloseWithActiveUploads from "./CloseWithActiveUploads.vue";
 import Generic from "./Generic.vue";
 import ShareInfo from "./ShareInfo.vue";
+import ProtectDuration from "./ProtectDuration.vue";
 import { state, getters, mutations } from "@/store"; // Import your custom store
 
 export default {
@@ -86,6 +87,7 @@ export default {
     CloseWithActiveUploads,
     generic: Generic,
     ShareInfo,
+    ProtectDuration,
   },
   data() {
     return {

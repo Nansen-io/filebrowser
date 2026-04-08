@@ -30,7 +30,9 @@
     "saveAndExit": "Зберегти та вийти",
     "keepEditing": "Продовжуйте редагувати",
     "closeAnyway": "Все одно зачиняй.",
-    "goToItem": "Перейти до пункту"
+    "goToItem": "Перейти до пункту",
+    "protect": "Захистити",
+    "protectSuccess": "Файл захищено та заблоковано в ChainFS"
   },
   "download": {
     "downloadFile": "Завантажити файл",
@@ -217,7 +219,10 @@
     "renameSuccess": "Елемент перейменовано успішно!",
     "newFileSuccess": "Файл успішно створено!",
     "newDirSuccess": "Каталог створено успішно!",
-    "copyToClipboardFailed": "Неможливо скопіювати в буфер обміну"
+    "copyToClipboardFailed": "Неможливо скопіювати в буфер обміну",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Менше, ніж:",
@@ -325,7 +330,12 @@
       "proxy": "Довірена особа"
     },
     "newUserHintSubFolder": "наприклад, '/subfolder' - порожній за замовчуванням",
-    "permissionsHelp": "Дозволи користувача контролюють доступ до того, які дії може виконувати користувач. Доступ адміністратора дає повний контроль над оновленням і зміною будь-яких налаштувань користувача, а також багатьох системних налаштувань."
+    "permissionsHelp": "Дозволи користувача контролюють доступ до того, які дії може виконувати користувач. Доступ адміністратора дає повний контроль над оновленням і зміною будь-яких налаштувань користувача, а також багатьох системних налаштувань.",
+    "adminDashboard": "Панель адміністратора",
+    "dashUptime": "Час роботи",
+    "dashMemory": "Використання пам'яті",
+    "dashMemSys": "Системна пам'ять",
+    "dashGoroutines": "Горутини"
   },
   "sidebar": {
     "siteSettings": "Налаштування сайту",
@@ -684,7 +694,8 @@
     "uploading": "Завантаження{suffix}",
     "paused": "Призупинився.{suffix}",
     "conflict": "Конфлікт{suffix}",
-    "change": "Зміна{suffix}"
+    "change": "Зміна{suffix}",
+    "version": "Версія"
   },
   "access": {
     "rules": "Правила доступу",

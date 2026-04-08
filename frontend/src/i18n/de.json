@@ -30,7 +30,9 @@
     "saveAndExit": "Speichern und Beenden",
     "keepEditing": "Weiter bearbeiten",
     "closeAnyway": "Jedenfalls schließen",
-    "goToItem": "Weiter zu Artikel"
+    "goToItem": "Weiter zu Artikel",
+    "protect": "Schützen",
+    "protectSuccess": "Datei geschützt und in ChainFS gesperrt"
   },
   "download": {
     "downloadFile": "Datei herunterladen",
@@ -217,7 +219,10 @@
     "renameSuccess": "Artikel erfolgreich umbenannt!",
     "newFileSuccess": "Datei erfolgreich erstellt!",
     "newDirSuccess": "Verzeichnis erfolgreich erstellt!",
-    "copyToClipboardFailed": "Kopieren in die Zwischenablage nicht möglich"
+    "copyToClipboardFailed": "Kopieren in die Zwischenablage nicht möglich",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Kleiner als:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "z.B. '/subfolder' - leer für Standard",
-    "permissionsHelp": "Die Benutzerrechte steuern den Zugriff auf die Art der Aktionen, die der Benutzer durchführen kann. Der Administrator-Zugang gibt Ihnen die volle Kontrolle über die Aktualisierung und Änderung der Benutzereinstellungen sowie vieler Systemeinstellungen."
+    "permissionsHelp": "Die Benutzerrechte steuern den Zugriff auf die Art der Aktionen, die der Benutzer durchführen kann. Der Administrator-Zugang gibt Ihnen die volle Kontrolle über die Aktualisierung und Änderung der Benutzereinstellungen sowie vieler Systemeinstellungen.",
+    "adminDashboard": "Admin-Dashboard",
+    "dashUptime": "Betriebszeit",
+    "dashMemory": "Genutzter Speicher",
+    "dashMemSys": "Systemspeicher",
+    "dashGoroutines": "Goroutinen"
   },
   "sidebar": {
     "siteSettings": "Seiteneinstellungen",
@@ -606,7 +616,8 @@
     "uploading": "Hochladen{suffix}",
     "paused": "Pausiert{suffix}",
     "conflict": "Konflikt{suffix}",
-    "change": "Ändern Sie{suffix}"
+    "change": "Ändern Sie{suffix}",
+    "version": "Version"
   },
   "access": {
     "rules": "Zugangsregeln",

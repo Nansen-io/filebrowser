@@ -95,6 +95,30 @@
               <i class="material-icons">{{ modifiedIcon }}</i>
             </p>
             <p
+              :class="{ active: createdSorted }"
+              class="created"
+              role="button"
+              tabindex="0"
+              @click="sort('created')"
+              :title="$t('files.sortByCreated')"
+              :aria-label="$t('files.sortByCreated')"
+            >
+              <span>{{ $t("files.dateCreated") }}</span>
+              <i class="material-icons">{{ createdIcon }}</i>
+            </p>
+            <p
+              :class="{ active: extensionSorted }"
+              class="type"
+              role="button"
+              tabindex="0"
+              @click="sort('extension')"
+              :title="$t('files.sortByType')"
+              :aria-label="$t('files.sortByType')"
+            >
+              <span>{{ $t("files.fileType") }}</span>
+              <i class="material-icons">{{ extensionIcon }}</i>
+            </p>
+            <p
               v-if="hasDuration"
               :class="{ active: durationSorted }"
               class="duration"
@@ -128,6 +152,7 @@
             v-bind:isDir="item.type == 'directory'"
             v-bind:source="req.source"
             v-bind:modified="item.modified"
+            v-bind:created="item.created"
             v-bind:type="item.type"
             v-bind:size="item.size"
             v-bind:path="item.path"
@@ -149,6 +174,7 @@
             v-bind:name="item.name"
             v-bind:isDir="item.type == 'directory'"
             v-bind:modified="item.modified"
+            v-bind:created="item.created"
             v-bind:source="req.source"
             v-bind:type="item.type"
             v-bind:size="item.size"
@@ -350,6 +376,12 @@ export default {
     durationSorted() {
       return getters.sorting().by === "duration";
     },
+    createdSorted() {
+      return getters.sorting().by === "created";
+    },
+    extensionSorted() {
+      return getters.sorting().by === "extension";
+    },
     ascOrdered() {
       return getters.sorting().asc;
     },
@@ -397,7 +429,18 @@ export default {
       if (this.durationSorted && this.ascOrdered) {
         return "arrow_downward";
       }
-
+      return "arrow_upward";
+    },
+    createdIcon() {
+      if (this.createdSorted && this.ascOrdered) {
+        return "arrow_downward";
+      }
+      return "arrow_upward";
+    },
+    extensionIcon() {
+      if (this.extensionSorted && this.ascOrdered) {
+        return "arrow_downward";
+      }
       return "arrow_upward";
     },
     viewIcon() {
@@ -467,9 +510,7 @@ export default {
           styles['--item-height'] = `${Math.round(baseSize * 1.2)}px`;
         }
       } else if (viewMode === 'list' || viewMode === 'compact') {
-        const baseHeight = viewMode === 'compact'
-          ? 40 + (state.user.gallerySize * 2)  // 40px to 56px - compact
-          : 50 + (state.user.gallerySize * 3); // 50px to 74px - list
+        const baseHeight = 50 + (state.user.gallerySize * 3); // 50px to 74px - unified for list and compact
         // Scale icons with gallery size - icon fonts: 1.6em to 2.4em, images: 1.2em to 1.8em
         const iconFontSize = (1.6 + (state.user.gallerySize * 0.1)).toFixed(2); // 1.7em to 2.5em
         const iconImageSize = (1.2 + (state.user.gallerySize * 0.075)).toFixed(3); // 1.275em to 1.875em

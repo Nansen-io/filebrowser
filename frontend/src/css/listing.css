@@ -15,7 +15,7 @@ body.rtl #listingView {
   margin: 0 0 0 0.5em;
   font-size: .9em;
   color: rgba(0, 0, 0, 0.38);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .listing-item div:last-of-type * {
@@ -27,6 +27,17 @@ body.rtl #listingView {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
+  width: 100%;
+}
+
+/* Ensure group sections always stack vertically and span full width */
+#listingView .folder-items,
+#listingView .file-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
 }
 
 .listing-item {
@@ -63,8 +74,14 @@ body.rtl #listingView {
 
 .listing-item .size,
 .listing-item .modified,
-.listing-item .duration {
+.listing-item .created,
+.listing-item .duration,
+.listing-item .type {
   font-size: 0.9em;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .listing-item i {
@@ -235,15 +252,13 @@ body.rtl #listingView {
 
 #listingView.compact .listing-item {
   width: 100%;
-  margin: 0;
+  margin: 0 0 5px 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0;
-  border-top: 0;
-  padding-left: .5em;
+  padding: .5em;
 }
 
 #listingView.compact h2 {
-  display: none;
+  font-size: 0.8em;
 }
 
 #listingView.compact .listing-item div:first-of-type {
@@ -268,42 +283,107 @@ body.rtl #listingView {
 }
 
 #listingView .header .name {
-  margin-right: 1.5em;
+  margin-right: 0;
 }
 
 #listingView .header>p {
   margin: 0;
   cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 700;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Column widths: all widths match between header and rows ── */
+#listingView .header .name,
+#listingView.list .listing-item .name,
+#listingView.compact .listing-item .name {
+  flex: 1 1 0;    /* name takes all remaining space */
+  min-width: 0;
 }
 
 #listingView .header .size,
 #listingView.list .listing-item .size,
 #listingView.compact .listing-item .size {
-  width: 25%;
+  width: 8em;
+  flex-shrink: 0;
+}
+
+#listingView .header .modified,
+#listingView.list .listing-item .modified,
+#listingView.compact .listing-item .modified {
+  width: 9em;
+  flex-shrink: 0;
+}
+
+#listingView .header .created,
+#listingView.list .listing-item .created,
+#listingView.compact .listing-item .created {
+  width: 9em;
+  flex-shrink: 0;
+}
+
+#listingView .header .type,
+#listingView.list .listing-item .type,
+#listingView.compact .listing-item .type {
+  width: 5em;
+  flex-shrink: 0;
+  color: var(--textSecondary, #888);
 }
 
 #listingView .header .duration,
 #listingView.list .listing-item .duration,
 #listingView.compact .listing-item .duration {
-  margin-left: auto;
-  padding-right: 1em;
+  width: 6em;
+  flex-shrink: 0;
+  padding-right: 0.5em;
+}
+
+/* ── Responsive: hide columns progressively ── */
+/* Below 1100px: hide Date Created */
+@media (max-width: 1100px) {
+  #listingView .header .created,
+  #listingView.list .listing-item .created,
+  #listingView.compact .listing-item .created {
+    display: none;
+  }
+}
+
+/* Below 850px: also hide Type */
+@media (max-width: 850px) {
+  #listingView .header .type,
+  #listingView.list .listing-item .type,
+  #listingView.compact .listing-item .type {
+    display: none;
+  }
+}
+
+/* Below 650px: also hide Size */
+@media (max-width: 650px) {
+  #listingView .header .size,
+  #listingView.list .listing-item .size,
+  #listingView.compact .listing-item .size {
+    display: none;
+  }
+}
+
+/* Below 500px: also hide Last Modified — name only */
+@media (max-width: 500px) {
+  #listingView .header .modified,
+  #listingView.list .listing-item .modified,
+  #listingView.compact .listing-item .modified {
+    display: none;
+  }
 }
 
 #listingView.list .listing-item .size.adjustment,
 #listingView.compact .listing-item .size.adjustment {
-  width: calc(25% + 1em) !important;
-}
-
-
-#listingView .header .name,
-#listingView.list .listing-item .name,
-#listingView.compact .listing-item .name {
-  width: 50%;
-}
-
-#listingView.list .listing-item .name.adjustment,
-#listingView.compact .listing-item .name.adjustment {
-  width: calc(50% + 1em) !important;
+  width: 8em !important;
 }
 
 #listingView.normal .listing-item .text {
@@ -311,8 +391,7 @@ body.rtl #listingView {
 }
 
 #listingView .header i {
-  font-size: 1.5em;
-  vertical-align: middle;
+  font-size: 1em;
   margin-left: .2em;
 }
 
@@ -324,9 +403,7 @@ body.rtl #listingView {
   border-bottom-right-radius: 0px;
 }
 
-#listingView.compact .listing-item:first-child {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
+
 
 #listingView.compact .header {
   margin: 0;
@@ -373,10 +450,9 @@ body.rtl #listingView {
 
 #listingView.list .listing-item {
   width: 100%;
-  margin: 0;
+  margin: 0 0 5px 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: .5em;
-  border-top: 0;
 }
 
 .listing-item[aria-selected=true] {
@@ -413,26 +489,31 @@ body.rtl #listingView {
   transition: width 0.25s ease-out, height 0.25s ease-out;
 }
 
-#listingView.list .listing-item div:last-of-type {
+#listingView.list .listing-item div:last-of-type,
+#listingView.compact .listing-item div:last-of-type {
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 #listingView .header {
   display: flex !important;
+  align-items: center;
   background: white;
   border: 1px solid rgba(0, 0, 0, .1);
   z-index: 999;
   padding: .85em;
   width: 100%;
+  box-sizing: border-box;
 }
 
 #listingView.list .header i,
 #listingView.normal .header i,
 #listingView.gallery .header i,
 #listingView.icons .header i {
-  font-size: 1.5em;
-  vertical-align: middle;
+  font-size: 1em;
   margin-left: .2em;
 }
 

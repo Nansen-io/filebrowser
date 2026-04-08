@@ -526,6 +526,7 @@ export default {
   border: 1px solid #ccc;
 }
 
+
 .main-input {
   width: 100%;
 }
@@ -763,7 +764,7 @@ body.rtl #search #result ul>* {
   border-bottom-left-radius: 0 !important;
 }
 
-/* Search Input Placeholder */
+/* Search Input Placeholder - white when inactive (over coloured header) */
 #search-input input,
 #search-input .main-input {
   color: #ffffff;
@@ -774,22 +775,15 @@ body.rtl #search #result ul>* {
   color: rgba(255, 255, 255, 0.6);
 }
 
-#search::-webkit-input-placeholder {
-  color: rgba(255, 255, 255, 0.5);
+/* Active light mode: override white to dark */
+#search:not(.dark-mode).active #search-input input,
+#search:not(.dark-mode).active #search-input .main-input {
+  color: #222 !important;
 }
 
-#search:-moz-placeholder {
-  opacity: 1;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-#search::-moz-placeholder {
-  opacity: 1;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-#search:-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.5);
+#search:not(.dark-mode).active #search-input input::placeholder,
+#search:not(.dark-mode).active #search-input .main-input::placeholder {
+  color: #888 !important;
 }
 
 /* Search Boxes */
@@ -964,5 +958,63 @@ body.rtl #search .boxes h3 {
     display: flex;
     flex-direction: column;
   }
+}
+</style>
+
+<style>
+/* Light mode: force dark text throughout the search modal */
+
+/* Close/action button icon */
+#search:not(.dark-mode).active #search-input .action i {
+  color: #333 !important;
+}
+
+/* Button groups (Only Folders / Only Files / type filters) */
+#search:not(.dark-mode) .button-group button {
+  color: #333 !important;
+}
+#search:not(.dark-mode) .button-group button.active {
+  color: #fff !important;
+}
+
+/* Size constraint labels and inputs */
+#search:not(.dark-mode) .sizeInputWrapper p,
+#search:not(.dark-mode) .sizeConstraints p {
+  color: #333 !important;
+}
+#search:not(.dark-mode) .sizeInput {
+  color: #333 !important;
+  background: #f5f5f5 !important;
+}
+#search:not(.dark-mode) .sizeInput::placeholder {
+  color: #888 !important;
+}
+
+/* Toggle switch label */
+#search:not(.dark-mode) .search-option-item,
+#search:not(.dark-mode) .search-option-item label,
+#search:not(.dark-mode) .search-option-item p,
+#search:not(.dark-mode) .search-option-item span {
+  color: #333 !important;
+}
+
+/* Result list and all descendants */
+#search:not(.dark-mode) #result-list,
+#search:not(.dark-mode) #result-list p,
+#search:not(.dark-mode) #result-list li,
+#search:not(.dark-mode) #result-list a,
+#search:not(.dark-mode) #result-list .text-container {
+  color: #333 !important;
+}
+
+/* "Not enough characters" / no-results prompt */
+#search:not(.dark-mode) .searchPrompt p,
+#search:not(.dark-mode) .searchPrompt {
+  color: #666 !important;
+}
+
+/* File size badge in results */
+#search:not(.dark-mode) .filesize {
+  color: #555 !important;
 }
 </style>

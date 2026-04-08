@@ -30,7 +30,9 @@
     "saveAndExit": "Opslaan en afsluiten",
     "keepEditing": "Blijven bewerken",
     "closeAnyway": "Sluiten",
-    "goToItem": "Ga naar item"
+    "goToItem": "Ga naar item",
+    "protect": "Beschermen",
+    "protectSuccess": "Bestand beschermd en vergrendeld op ChainFS"
   },
   "download": {
     "downloadFile": "Bestand downloaden",
@@ -217,7 +219,10 @@
     "renameSuccess": "Item hernoemd succesvol!",
     "newFileSuccess": "Bestand succesvol aangemaakt!",
     "newDirSuccess": "Directory succesvol aangemaakt!",
-    "copyToClipboardFailed": "Kan niet naar klembord kopiëren"
+    "copyToClipboardFailed": "Kan niet naar klembord kopiëren",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Kleiner dan:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "bijv. '/submap' - leeg voor standaard",
-    "permissionsHelp": "Gebruikersrechten bepalen welke acties de gebruiker kan uitvoeren. Administrar toegang geeft volledige controle om de instellingen van elke gebruiker bij te werken en te wijzigen, evenals vele systeeminstellingen."
+    "permissionsHelp": "Gebruikersrechten bepalen welke acties de gebruiker kan uitvoeren. Administrar toegang geeft volledige controle om de instellingen van elke gebruiker bij te werken en te wijzigen, evenals vele systeeminstellingen.",
+    "adminDashboard": "Beheerderspaneel",
+    "dashUptime": "Bedrijfstijd",
+    "dashMemory": "Geheugengebruik",
+    "dashMemSys": "Systeemgeheugen",
+    "dashGoroutines": "Goroutines"
   },
   "sidebar": {
     "siteSettings": "Site-instellingen",
@@ -684,7 +694,8 @@
     "uploading": "uploaden{suffix}",
     "paused": "Gepauzeerd{suffix}",
     "conflict": "Conflict{suffix}",
-    "change": "Verander{suffix}"
+    "change": "Verander{suffix}",
+    "version": "Versie"
   },
   "access": {
     "rules": "Toegangsregels",

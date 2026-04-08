@@ -35,16 +35,6 @@
           <span>{{ $t('general.upload') }}</span>
         </button>
 
-        <!-- Share -->
-        <button
-          v-if="canShare"
-          @click="handleShare"
-          class="action button action-button"
-          :aria-label="$t('general.share')"
-        >
-          <i class="material-icons action-icon">share</i>
-          <span>{{ $t('general.share') }}</span>
-        </button>
       </div>
     </div>
   </transition>
@@ -138,8 +128,8 @@ export default {
 
 <style scoped>
 .sidebar-actions {
-  padding: 1em;
-  margin-top: 0.5em;
+  padding: 0.63em;
+  margin-top: 0.35em;
   background-color: var(--background);
   border-radius: 1em;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -148,7 +138,7 @@ export default {
 .inner-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 0.32em;
   width: 100%;
 }
 
@@ -157,14 +147,14 @@ export default {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 0.75em 1em;
+  padding: 0.47em 0.63em;
   border-radius: 0.5em;
   background-color: transparent;
   color: var(--textPrimary);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
-  gap: 0.75em;
+  gap: 0.47em;
 }
 
 .action-button:hover {

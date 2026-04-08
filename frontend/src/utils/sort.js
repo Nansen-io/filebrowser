@@ -1,3 +1,9 @@
+function getExtension(name) {
+    if (!name || !name.includes('.')) return '';
+    const ext = name.split('.').pop();
+    return ext === name ? '' : ext.toLowerCase();
+}
+
 export function sortedItems(items = [], sortby="name", asc=true) {
     return items.sort((a, b) => {
         let valueA = a[sortby];
@@ -9,13 +15,21 @@ export function sortedItems(items = [], sortby="name", asc=true) {
             valueB = b.metadata?.duration ?? 0;
         }
 
+        // Special handling for extension/type sorting
+        if (sortby === "extension") {
+            valueA = a.type === "directory" ? "\x00" : getExtension(a.name);
+            valueB = b.type === "directory" ? "\x00" : getExtension(b.name);
+            const comparison = valueA.localeCompare(valueB, undefined, { sensitivity: 'base' });
+            return asc ? comparison : -comparison;
+        }
+
         if (sortby === "name") {
             // Use localeCompare with numeric option for natural sorting
             const comparison = valueA.localeCompare(valueB, undefined, { numeric: true, sensitivity: 'base' });
             return asc ? comparison : -comparison;
         }
 
-        // Default sorting for other fields
+        // Default sorting for other fields (including created, modified — ISO strings compare correctly)
         if (asc) {
             return valueA > valueB ? 1 : -1;
         } else {

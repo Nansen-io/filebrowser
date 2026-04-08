@@ -108,6 +108,12 @@
         show="delete"
       />
       <action
+        v-if="showProtect"
+        icon="shield"
+        :label="$t('buttons.protect')"
+        @action="protectSelected"
+      />
+      <action
         v-if="showAccess"
         icon="lock"
         :label="$t('access.rules')"
@@ -242,6 +248,13 @@ export default {
     },
     showOverflow() {
       return getters.currentPromptName() == "OverflowMenu";
+    },
+    showProtect() {
+      if (this.showCreate || this.isShare || this.isSearchActive) return false;
+      if (this.selectedCount !== 1) return false;
+      const item = getters.getFirstSelected();
+      if (!item || item.isDir) return false;
+      return state.user?.loginMethod === 'chainfs';
     },
     showAccess() {
       if (getters.isShare()) {
@@ -505,6 +518,15 @@ export default {
         parentPath = "/";
       }
       url.goToItem(state.req.source, parentPath, {});
+    },
+    protectSelected() {
+      const item = getters.getFirstSelected();
+      if (!item) return;
+      const source = item.source || state.req.source;
+      mutations.showHover({
+        name: "ProtectDuration",
+        props: { item, source },
+      });
     },
     selectAllItems() {
       if (state.req && state.req.items && state.req.items.length > 0) {

@@ -103,7 +103,7 @@ export default {
       if ((simpleType === "document" || simpleType === "text") && !getters.previewPerms().office) {
         return false;
       }
-      if (!getters.previewPerms().folder && this.mimetype == "directory") {
+      if (this.mimetype == "directory") {
         return false;
       }
       return this.imageState !== 'error' && !this.disablePreviewExt && !this.officeFileDisabled

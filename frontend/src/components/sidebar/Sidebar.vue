@@ -87,16 +87,16 @@ export default {
 #sidebar {
   display: flex;
   flex-direction: column;
-  padding: 1em;
+  padding: 0 0.7em 4em 0.7em;
   width: 20em;
   position: fixed;
   z-index: 4;
   left: -20em;
   height: 100%;
-  transition: 0.5s ease;
-  top: 4em;
-  padding-bottom: 4em;
+  transition: left 0.5s ease;
+  top: calc(4em + 10px);
   background-color: #3a7d82 !important;
+  --sidebar-bg: #3a7d82;
   color: #f4f8f8 !important;
 }
 
@@ -107,6 +107,7 @@ export default {
   }
   #sidebar.dark-mode {
     background-color: rgb(37 49 55 / 33%) !important;
+    --sidebar-bg: #1a2430;
   }
 }
 
@@ -227,13 +228,17 @@ body.rtl .action {
 #sidebar.active::after {
   content: '';
   position: fixed;
-  top: 4em;
+  top: calc(4em + 10px);
   left: 20em;
   width: 1em;
   height: 1em;
-  background: radial-gradient(circle at 100% 100%, transparent 1em, #3a7d82 1em);
+  background: radial-gradient(circle at 100% 100%, transparent 1em, var(--sidebar-bg) 1em);
   z-index: 4;
   pointer-events: none;
+}
+
+#sidebar .headline-card {
+  padding-top: 0.375em;
 }
 
 </style>

@@ -4,13 +4,6 @@
   </div>
 
   <div class="card-content help-content">
-    <p class="help-description">
-      {{ $t("help.description") }}
-      <a class="link" href="https://filebrowserquantum.com/" target="_blank">
-        {{ $t("help.wiki") }}
-      </a>
-    </p>
-
     <div class="shortcuts-grid">
       <!-- Function Keys Section -->
       <div class="shortcut-section">

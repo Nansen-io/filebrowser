@@ -13,6 +13,7 @@ const settings = [
   { id: 'users', label: 'settings.userManagement', component: 'UserManagement', icon: 'group' },
   { id: 'access', label: 'access.accessManagement', component: 'AccessSettings', permissions: { admin: true }, icon: 'lock' },
   { id: 'systemAdmin', label: 'settings.systemAdmin', component: 'SystemAdmin', permissions: { admin: true }, icon: 'admin_panel_settings' },
+  { id: 'adminDashboard', label: 'settings.adminDashboard', component: 'AdminDashboard', permissions: { admin: true }, icon: 'dashboard' },
 ];
 
 const previewViews = [

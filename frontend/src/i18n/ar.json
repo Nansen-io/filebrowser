@@ -30,7 +30,9 @@
     "saveAndExit": "الحفظ والخروج",
     "keepEditing": "استمر في التحرير",
     "closeAnyway": "إغلاق على أي حال",
-    "goToItem": "الانتقال إلى العنصر"
+    "goToItem": "الانتقال إلى العنصر",
+    "protect": "حماية",
+    "protectSuccess": "تم حماية الملف وقفله في ChainFS"
   },
   "download": {
     "downloadFile": "Download File",
@@ -217,7 +219,10 @@
     "renameSuccess": "تمت إعادة تسمية العنصر بنجاح!",
     "newFileSuccess": "تم إنشاء الملف بنجاح!",
     "newDirSuccess": "تم إنشاء الدليل بنجاح!",
-    "copyToClipboardFailed": "تعذر النسخ إلى الحافظة"
+    "copyToClipboardFailed": "تعذر النسخ إلى الحافظة",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "أصغر من:",
@@ -325,7 +330,12 @@
       "proxy": "الوكيل"
     },
     "newUserHintSubFolder": "على سبيل المثال '/مجلد فرعي' - فارغ للافتراضي",
-    "permissionsHelp": "تتحكم أذونات المستخدم في الوصول إلى نوع الإجراءات التي يمكن للمستخدم تنفيذها. يمنح الوصول إلى المسؤول التحكم الكامل لتحديث وتغيير إعدادات أي مستخدم بالإضافة إلى العديد من إعدادات النظام."
+    "permissionsHelp": "تتحكم أذونات المستخدم في الوصول إلى نوع الإجراءات التي يمكن للمستخدم تنفيذها. يمنح الوصول إلى المسؤول التحكم الكامل لتحديث وتغيير إعدادات أي مستخدم بالإضافة إلى العديد من إعدادات النظام.",
+    "adminDashboard": "لوحة الإدارة",
+    "dashUptime": "وقت التشغيل",
+    "dashMemory": "الذاكرة المستخدمة",
+    "dashMemSys": "ذاكرة النظام",
+    "dashGoroutines": "الغوروتينات"
   },
   "sidebar": {
     "siteSettings": "إعدادات الموقع",
@@ -606,7 +616,8 @@
     "uploading": "التحميل{suffix}",
     "paused": "متوقف مؤقتاً{suffix}",
     "conflict": "التعارض{suffix}",
-    "change": "التغيير{suffix}"
+    "change": "التغيير{suffix}",
+    "version": "الإصدار"
   },
   "access": {
     "rules": "قواعد الوصول",

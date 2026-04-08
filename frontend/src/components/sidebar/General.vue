@@ -1,45 +1,26 @@
 <template>
   <div class="card headline-card">
-    <div class="card-wrapper user-card">
-      <div v-if="settingsAllowed" class="user-icon-item"
-        @click.prevent="navigateTo('/settings', '#profile-main')"
-        @mouseenter="showTooltip($event, $t('index.settingsHover'))" @mouseleave="hideTooltip">
-        <i class="material-icons">person</i>
-      </div>
-      <div v-else-if="user.username === 'anonymous'" class="user-icon-item" @click="navigateToLogin">
-        <i class="material-symbols-outlined">login</i>
-      </div>
-      <div v-else class="user-icon-item">
-        <i class="material-icons">person</i>
-      </div>
-
+    <div class="card-wrapper user-card icon-row" @mouseleave="hideTooltip">
       <div v-if="settingsAllowed" class="user-icon-item"
         @click.prevent="navigateTo('/settings', '#profile-main')"
         @mouseenter="showTooltip($event, $t('index.settingsHover'))" @mouseleave="hideTooltip">
         <i class="material-icons">settings</i>
       </div>
 
+      <div aria-label="Toggle Theme" v-if="!disableQuickToggles && darkModeTogglePossible"
+        class="user-icon-item" :class="{ active: user?.darkMode }" @click="toggleDarkMode"
+        @mouseenter="showTooltip($event, $t('index.toggleDark'))" @mouseleave="hideTooltip">
+        <i class="material-icons">dark_mode</i>
+      </div>
+
+      <div v-if="!disableQuickToggles" class="user-icon-item" @click="help"
+        @mouseenter="showTooltip($event, $t('general.help'))" @mouseleave="hideTooltip">
+        <i class="material-icons">help_outline</i>
+      </div>
+
       <div class="user-icon-item logout-icon" v-if="canLogout" @click="logout"
         @mouseenter="showTooltip($event, $t('general.logout'))" @mouseleave="hideTooltip">
         <i class="material-icons">exit_to_app</i>
-      </div>
-    </div>
-
-    <div v-if="!disableQuickToggles" class="card-wrapper" @mouseleave="hideTooltip">
-      <div class="quick-toggles" :class="{ 'extra-padding': !hasCreateOptions }">
-        <div class="clickable" :class="{ active: user?.singleClick }" @click="toggleClick"
-          @mouseenter="showTooltip($event, $t('index.toggleClick'))" @mouseleave="hideTooltip" v-if="!isInvalidShare">
-          <i class="material-icons">ads_click</i>
-        </div>
-        <div aria-label="Toggle Theme" v-if="darkModeTogglePossible" class="clickable"
-          :class="{ active: user?.darkMode }" @click="toggleDarkMode"
-          @mouseenter="showTooltip($event, $t('index.toggleDark'))" @mouseleave="hideTooltip">
-          <i class="material-icons">dark_mode</i>
-        </div>
-        <div class="clickable" @click="help"
-          @mouseenter="showTooltip($event, $t('general.help'))" @mouseleave="hideTooltip">
-          <i class="material-icons">help_outline</i>
-        </div>
       </div>
     </div>
 
@@ -347,7 +328,7 @@ export default {
   display: flex;
   justify-content: space-evenly;
   width: 100%;
-  margin-top: 0.5em !important;
+  margin-top: 0.35em !important;
   color: var(--textPrimary);
 }
 
@@ -423,14 +404,29 @@ button.action {
 }
 
 .headline-card {
-  padding: 1em;
+  padding: 0.53em 0.7em;
+}
+
+.icon-row {
+  flex-direction: row !important;
+  justify-content: space-evenly !important;
+  flex-wrap: nowrap;
+  margin-top: 0 !important;
+}
+
+.user-icon-item.active {
+  background-color: var(--primaryColor) !important;
+}
+
+.user-icon-item.active i {
+  color: white;
 }
 
 
 .file-actions {
   display: none;
-  padding: 0.25em !important;
-  margin-top: 0.5em !important;
+  padding: 0.18em !important;
+  margin-top: 0.35em !important;
   align-items: center;
   justify-content: center;
 }

@@ -1,6 +1,6 @@
 body {
   font-family: "Roboto", sans-serif;
-  padding-top: 4em;
+  padding-top: calc(4em + 10px);
   background-color: var(--background);
   color: #333333;
   overflow:auto;
@@ -72,7 +72,7 @@ over
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
   position: fixed;
-  padding-top: 4em;
+  padding-top: calc(4em + 10px);
   overflow: unset;
   top: 0;
   height: 100%;
@@ -91,7 +91,7 @@ over
 }
 
 .main-padding {
-  padding: 4em .5em .5em;
+  padding: calc(4em + 10px) .5em .5em;
 }
 
 /* Files */

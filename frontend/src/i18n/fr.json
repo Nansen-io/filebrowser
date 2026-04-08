@@ -30,7 +30,9 @@
     "saveAndExit": "Sauvegarder et quitter",
     "keepEditing": "Continuer à éditer",
     "closeAnyway": "Fermer Quoi qu'il en soit",
-    "goToItem": "Aller à l'article"
+    "goToItem": "Aller à l'article",
+    "protect": "Protéger",
+    "protectSuccess": "Fichier protégé et verrouillé sur ChainFS"
   },
   "download": {
     "downloadFile": "Télécharger le fichier",
@@ -217,7 +219,10 @@
     "renameSuccess": "L'élément a été renommé avec succès !",
     "newFileSuccess": "Fichier créé avec succès !",
     "newDirSuccess": "Répertoire créé avec succès !",
-    "copyToClipboardFailed": "Impossible de copier dans le presse-papiers"
+    "copyToClipboardFailed": "Impossible de copier dans le presse-papiers",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Plus petit que :",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "par exemple \"/sous-dossier\" - vide par défaut",
-    "permissionsHelp": "Les autorisations de l'utilisateur contrôlent l'accès au type d'actions que l'utilisateur peut effectuer. L'accès administrateur permet de mettre à jour et de modifier les paramètres de tout utilisateur ainsi que de nombreux paramètres du système."
+    "permissionsHelp": "Les autorisations de l'utilisateur contrôlent l'accès au type d'actions que l'utilisateur peut effectuer. L'accès administrateur permet de mettre à jour et de modifier les paramètres de tout utilisateur ainsi que de nombreux paramètres du système.",
+    "adminDashboard": "Tableau de bord",
+    "dashUptime": "Temps de fonctionnement",
+    "dashMemory": "Mémoire utilisée",
+    "dashMemSys": "Mémoire système",
+    "dashGoroutines": "Goroutines"
   },
   "sidebar": {
     "siteSettings": "Paramètres du site",
@@ -606,7 +616,8 @@
     "uploading": "Téléchargement{suffix}",
     "paused": "En pause{suffix}",
     "conflict": "Conflit{suffix}",
-    "change": "Changer{suffix}"
+    "change": "Changer{suffix}",
+    "version": "Version"
   },
   "access": {
     "rules": "Règles d'accès",

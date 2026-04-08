@@ -69,7 +69,7 @@ export default {
   align-items: center;
   justify-content: flex-start;
   overflow: unset !important;
-  padding: 0.75em 1em;
+  padding: 0.53em 0.7em;
 }
 
 #sidebar .settings-card,

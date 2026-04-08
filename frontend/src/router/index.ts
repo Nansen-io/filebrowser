@@ -9,25 +9,6 @@ import { globalVars } from "@/utils/constants";
 import { getters, state } from "@/store";
 import { mutations } from "@/store";
 import { validateLogin } from "@/utils/auth";
-import i18n from "@/i18n";
-
-const titles = {
-  Login: i18n.global.t("general.login"),
-  Share: i18n.global.t("general.share"),
-  PublicShare: i18n.global.t("general.share"),
-  Files: i18n.global.t("general.files"),
-  Tools: i18n.global.t("general.tool"),
-  Settings: i18n.global.t("general.settings"),
-  ProfileSettings: i18n.global.t("settings.profileSettings"),
-  Shares: i18n.global.t("settings.shareManagement"),
-  GlobalSettings: i18n.global.t("settings.globalSettings"),
-  Users: i18n.global.t("general.users"),
-  User: i18n.global.t("general.user"),
-  Forbidden: i18n.global.t("errors.forbidden"),
-  NotFound: i18n.global.t("errors.notFound"),
-  ShareNotFound: i18n.global.t("errors.shareNotFound"),
-  InternalServerError: i18n.global.t("errors.internal"),
-};
 
 const routes: RouteRecordRaw[] = [
   {
@@ -169,8 +150,7 @@ router.beforeResolve(async (to, from, next) => {
     return next(false);
   }
 
-  const title = titles[to.name as keyof typeof titles] || String(to.name || '');
-  document.title = globalVars.name + " - " + title;
+  document.title = globalVars.name;
   mutations.setRoute(to);
 
   if (

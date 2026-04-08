@@ -30,7 +30,9 @@
     "saveAndExit": "Salvar e sair",
     "keepEditing": "Continuar editando",
     "closeAnyway": "Fechar de qualquer maneira",
-    "goToItem": "Ir para o item"
+    "goToItem": "Ir para o item",
+    "protect": "Proteger",
+    "protectSuccess": "Arquivo protegido e bloqueado no ChainFS"
   },
   "download": {
     "downloadFile": "Baixar arquivo",
@@ -217,7 +219,10 @@
     "renameSuccess": "Item renomeado com sucesso!",
     "newFileSuccess": "Arquivo criado com sucesso!",
     "newDirSuccess": "Diretório criado com sucesso!",
-    "copyToClipboardFailed": "Não é possível copiar para a área de transferência"
+    "copyToClipboardFailed": "Não é possível copiar para a área de transferência",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Menor que:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "Por exemplo, '/subfolder' - em branco para o padrão",
-    "permissionsHelp": "As permissões de usuário controlam o acesso aos tipos de ações que o usuário pode executar. O acesso de administrador dá controle total para atualizar e alterar as configurações de qualquer usuário, bem como muitas configurações do sistema."
+    "permissionsHelp": "As permissões de usuário controlam o acesso aos tipos de ações que o usuário pode executar. O acesso de administrador dá controle total para atualizar e alterar as configurações de qualquer usuário, bem como muitas configurações do sistema.",
+    "adminDashboard": "Painel de administração",
+    "dashUptime": "Tempo ativo",
+    "dashMemory": "Memória usada",
+    "dashMemSys": "Memória do sistema",
+    "dashGoroutines": "Goroutines"
   },
   "sidebar": {
     "siteSettings": "Configurações do site",
@@ -606,7 +616,8 @@
     "uploading": "Carregamento{suffix}",
     "paused": "Em pausa{suffix}",
     "conflict": "Conflito{suffix}",
-    "change": "Mudança{suffix}"
+    "change": "Mudança{suffix}",
+    "version": "Versão"
   },
   "access": {
     "rules": "Regras de acesso",

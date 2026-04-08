@@ -39,7 +39,6 @@
               <th>{{ $t("time.unit") }}</th>
               <th></th>
               <th></th>
-              <th></th>
             </tr>
 
             <tr v-for="link in links" :key="link.hash">
@@ -58,13 +57,6 @@
                 <button class="action copy-clipboard" :data-clipboard-text="link.shareURL"
                   :aria-label="$t('buttons.copyToClipboard')" :title="$t('buttons.copyToClipboard')">
                   <i class="material-icons">content_paste</i>
-                </button>
-              </td>
-              <td class="small">
-                <button :disabled="link.shareType == 'upload'" class="action copy-clipboard"
-                  :data-clipboard-text="link.downloadURL" :aria-label="$t('buttons.copyDownloadLinkToClipboard')"
-                  :title="$t('buttons.copyDownloadLinkToClipboard')">
-                  <i class="material-icons">content_paste_go</i>
                 </button>
               </td>
               <td class="small">
@@ -97,7 +89,7 @@
         <p>
           {{ $t("prompts.optionalPassword") }}
           <i class="no-select material-symbols-outlined tooltip-info-icon"
-            @mouseenter="showTooltip($event, $t('share.passwordDescription'))" @mouseleave="hideTooltip">
+            @mouseenter="showTooltip($event, $t('prompts.optionalPasswordHelp'))" @mouseleave="hideTooltip">
             help
           </i>
         </p>
@@ -107,7 +99,7 @@
             {{ $t("general.change") }}
           </button>
         </div>
-        <input v-else class="input" type="password" autocomplete="new-password" v-model.trim="password" />
+        <input v-else class="input" type="password" autocomplete="new-password" v-model.trim="password" required />
         <p>
           {{ $t("share.shareType") }}
           <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -118,6 +110,7 @@
         <select class="input" v-model="shareType">
           <option value="normal">{{ $t("share.normalShare") }}</option>
           <option value="upload">{{ $t("share.uploadShare") }}</option>
+          <option value="viewOnly">{{ $t("share.viewOnlyShare") }}</option>
         </select>
         <button @click="openSidebarLinksCustomization" class="button button--flat customize-sidebar-links-button">
           <i class="material-icons">link</i>
@@ -134,109 +127,53 @@
           <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="allowCreate" :name="$t('share.allowCreate')"
             :description="$t('share.allowCreateDescription')"
             aria-label="allow creating and uploading files and folders toggle" />
-          <ToggleSwitch v-if="createAllowed" class="item" v-model="allowReplacements"
+          <ToggleSwitch v-if="createAllowed && shareType === 'normal'" class="item" v-model="allowReplacements"
             :name="$t('share.allowReplacements')" :description="$t('share.allowReplacementsDescription')" />
-          <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="disableFileViewer"
-            :name="$t('share.disableFileViewer')" />
           <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="quickDownload"
             :name="$t('profileSettings.showQuickDownload')"
             :description="$t('profileSettings.showQuickDownloadDescription')" />
-          <ToggleSwitch class="item" v-model="disableAnonymous" :name="$t('share.disableAnonymous')"
-            :description="$t('share.disableAnonymousDescription')" />
-          <ToggleSwitch class="item" v-model="enableAllowedUsernames" :name="$t('share.enableAllowedUsernames')"
-            :description="$t('share.enableAllowedUsernamesDescription')" />
+          <!-- disableAnonymous toggle hidden -->
 
-          <div v-if="enableAllowedUsernames" class="item">
-            <input class="input" type="text" v-model.trim="allowedUsernames"
-              :placeholder="$t('share.allowedUsernamesPlaceholder')" />
-          </div>
           <ToggleSwitch v-if="shareType === 'normal' && onlyOfficeAvailable" class="item" v-model="enableOnlyOffice"
             :name="$t('share.enableOnlyOffice')" :description="$t('share.enableOnlyOfficeDescription')" />
-          <p>
-            {{ $t("share.enforceDarkLightMode") }}
-            <i class="no-select material-symbols-outlined tooltip-info-icon"
-              @mouseenter="showTooltip($event, $t('share.enforceDarkLightModeDescription'))" @mouseleave="hideTooltip">
-              help
-            </i>
-          </p>
-          <select class="input" v-model="enforceDarkLightMode">
-            <option value="default">{{ $t("share.default") }}</option>
-            <option value="dark">{{ $t("share.dark") }}</option>
-            <option value="light">{{ $t("share.light") }}</option>
-          </select>
         </div>
-        <!-- <ViewMode :viewMode="viewMode" @update:viewMode="viewMode = $event" /> -->
-        <p>
-          {{ $t("prompts.shareTheme") }}
-          <i class="no-select material-symbols-outlined tooltip-info-icon"
-            @mouseenter="showTooltip($event, $t('share.shareThemeDescription'))" @mouseleave="hideTooltip">
-            help
-          </i>
-        </p>
-        <div v-if="Object.keys(availableThemes).length > 0" class="form-flex-group">
-          <select class="input" v-model="shareTheme">
-            <option v-for="(theme, key) in availableThemes" :key="key" :value="key">
-              {{ String(key) === "default" ? $t("profileSettings.defaultThemeDescription") : `${key} -
-              ${theme.description}`
-              }}
-            </option>
-          </select>
+        <div v-if="shareType === 'normal'" class="settings-items">
+          <ToggleSwitch class="item" v-model="keepAfterExpiration" :name="$t('share.keepAfterExpiration')"
+            :description="$t('share.keepAfterExpirationDescription')" />
+          <ToggleSwitch class="item" v-model="disableThumbnails"
+            :name="$t('share.disableThumbnails')" :description="$t('share.disableThumbnailsDescription')" />
+          <ToggleSwitch class="item" v-model="showHidden"
+            :name="$t('profileSettings.showHiddenFiles')" :description="$t('profileSettings.showHiddenFilesDescription')" />
+          <ToggleSwitch class="item" v-model="disableNavButtons" :name="$t('share.hideNavButtons')"
+            :description="$t('share.hideNavButtonsDescription')" />
+          <ToggleSwitch class="item" v-model="disableShareCard" :name="$t('share.disableShareCard')"
+            :description="$t('share.disableShareCardDescription')" />
+          <ToggleSwitch class="item" v-model="disableSidebar"
+            :name="$t('share.disableSidebar')" :description="$t('share.disableSidebarDescription')" />
+          <ToggleSwitch class="item" v-model="perUserDownloadLimit"
+            :name="$t('share.perUserDownloadLimit')" :description="$t('share.perUserDownloadLimitDescription')" />
+          <ToggleSwitch class="item" v-model="extractEmbeddedSubtitles"
+            :name="$t('share.extractEmbeddedSubtitles')"
+            :description="$t('share.extractEmbeddedSubtitlesDescription')" />
         </div>
+
         <div v-if="shareType === 'normal'">
           <p>
-            {{ $t("share.defaultViewMode") }}
+            {{ $t("prompts.downloadsLimit") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
-              @mouseenter="showTooltip($event, $t('share.defaultViewModeDescription'))" @mouseleave="hideTooltip">
+              @mouseenter="showTooltip($event, $t('share.downloadsLimitDescription'))" @mouseleave="hideTooltip">
               help
             </i>
           </p>
-          <select class="input" v-model="viewMode">
-            <option value="normal">{{ $t("buttons.normalView") }}</option>
-            <option value="list">{{ $t("buttons.listView") }}</option>
-            <option value="gallery">{{ $t("buttons.galleryView") }}</option>
-          </select>
-        </div>
-        <SettingsItem :title="$t('buttons.showMore')" :collapsable="true" :start-collapsed="true">
-          <div class="settings-items">
-            <ToggleSwitch class="item" v-model="keepAfterExpiration" :name="$t('share.keepAfterExpiration')"
-              :description="$t('share.keepAfterExpirationDescription')" />
-            <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="disableThumbnails"
-              :name="$t('share.disableThumbnails')" :description="$t('share.disableThumbnailsDescription')" />
-            <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="showHidden"
-              :name="$t('profileSettings.showHiddenFiles')" :description="$t('profileSettings.showHiddenFilesDescription')" />
-            <ToggleSwitch class="item" v-model="disableNavButtons" :name="$t('share.hideNavButtons')"
-              :description="$t('share.hideNavButtonsDescription')" />
-            <ToggleSwitch class="item" v-model="disableShareCard" :name="$t('share.disableShareCard')"
-              :description="$t('share.disableShareCardDescription')" />
-            <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="disableSidebar"
-              :name="$t('share.disableSidebar')" :description="$t('share.disableSidebarDescription')" />
-            <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="perUserDownloadLimit"
-              :name="$t('share.perUserDownloadLimit')" :description="$t('share.perUserDownloadLimitDescription')" />
-            <ToggleSwitch v-if="shareType === 'normal'" class="item" v-model="extractEmbeddedSubtitles"
-              :name="$t('share.extractEmbeddedSubtitles')"
-              :description="$t('share.extractEmbeddedSubtitlesDescription')" />
-          </div>
-
-          <div v-if="shareType === 'normal'">
-            <p>
-              {{ $t("prompts.downloadsLimit") }}
-              <i class="no-select material-symbols-outlined tooltip-info-icon"
-                @mouseenter="showTooltip($event, $t('share.downloadsLimitDescription'))" @mouseleave="hideTooltip">
-                help
-              </i>
-            </p>
-            <input class="input" type="number" min="0" v-model.number="downloadsLimit" />
-            <p>
-              {{ $t("prompts.maxBandwidth") }}
-              <i class="no-select material-symbols-outlined tooltip-info-icon"
-                @mouseenter="showTooltip($event, $t('share.maxBandwidthDescription'))" @mouseleave="hideTooltip">
-                help
-              </i>
-            </p>
-            <input class="input" type="number" min="0" v-model.number="maxBandwidth" />
-          </div>
-
-
+          <input class="input" type="number" min="0" v-model.number="downloadsLimit" />
+          <p>
+            {{ $t("prompts.maxBandwidth") }}
+            <i class="no-select material-symbols-outlined tooltip-info-icon"
+              @mouseenter="showTooltip($event, $t('share.maxBandwidthDescription'))" @mouseleave="hideTooltip">
+              help
+            </i>
+          </p>
+          <input class="input" type="number" min="0" v-model.number="maxBandwidth" />
           <p>
             {{ $t("prompts.shareThemeColor") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -245,7 +182,6 @@
             </i>
           </p>
           <input class="input" type="text" v-model.trim="themeColor" />
-
           <p>
             {{ $t("prompts.shareTitle") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -254,7 +190,6 @@
             </i>
           </p>
           <input class="input" type="text" v-model.trim="title" />
-
           <p>
             {{ $t("prompts.shareDescription") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -263,7 +198,6 @@
             </i>
           </p>
           <textarea class="input" v-model.trim="description"></textarea>
-
           <p>
             {{ $t("prompts.shareBanner") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -272,7 +206,6 @@
             </i>
           </p>
           <input class="input" type="text" v-model.trim="banner" />
-
           <p>
             {{ $t("prompts.shareFavicon") }}
             <i class="no-select material-symbols-outlined tooltip-info-icon"
@@ -281,7 +214,7 @@
             </i>
           </p>
           <input class="input" type="text" v-model.trim="favicon" />
-        </SettingsItem>
+        </div>
       </div>
     </div>
   </div>
@@ -314,7 +247,6 @@ import Clipboard from "clipboard";
 import { fromNow } from "@/utils/moment";
 import { buildItemUrl } from "@/utils/url";
 import ToggleSwitch from "@/components/settings/ToggleSwitch.vue";
-import SettingsItem from "@/components/settings/SettingsItem.vue";
 import FileList from "./FileList.vue";
 import { globalVars } from "@/utils/constants";
 import { eventBus } from "@/store/eventBus";
@@ -324,7 +256,6 @@ export default {
   name: "share",
   components: {
     ToggleSwitch,
-    SettingsItem,
     FileList,
     //ViewMode,
   },
@@ -463,6 +394,15 @@ export default {
         this.isChangingPassword = false;
       }
     },
+    shareType(val) {
+      if (val === 'viewOnly') {
+        this.disableDownload = true;
+        this.allowModify = false;
+        this.allowDelete = false;
+        this.allowCreate = false;
+        this.quickDownload = false;
+      }
+    },
     isEditMode: {
       immediate: true,
       handler(isEditMode) {
@@ -576,6 +516,10 @@ export default {
     },
     async submit() {
       try {
+        if (!this.hasExistingPassword && !this.password) {
+          notify.showError(this.$t("share.passwordRequired"));
+          return;
+        }
         if (!this.description) {
           if (this.shareType === 'upload') {
             this.description = this.$t("share.descriptionUploadDefault");

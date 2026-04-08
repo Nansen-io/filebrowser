@@ -30,7 +30,9 @@
     "saveAndExit": "保存并退出",
     "keepEditing": "继续编辑",
     "closeAnyway": "无论如何关闭",
-    "goToItem": "转到项目"
+    "goToItem": "转到项目",
+    "protect": "保护",
+    "protectSuccess": "文件已保护并锁定到ChainFS"
   },
   "download": {
     "downloadFile": "下载文件",
@@ -217,7 +219,10 @@
     "renameSuccess": "项目重命名成功！",
     "newFileSuccess": "文件创建成功！",
     "newDirSuccess": "目录创建成功！",
-    "copyToClipboardFailed": "无法复制到剪贴板"
+    "copyToClipboardFailed": "无法复制到剪贴板",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "小于",
@@ -325,7 +330,12 @@
       "proxy": "代理"
     },
     "newUserHintSubFolder": "例如\"/子文件夹\"--默认为空",
-    "permissionsHelp": "用户权限控制用户可以执行哪些类型的操作。管理员权限可完全控制更新和更改任何用户的设置以及许多系统设置。"
+    "permissionsHelp": "用户权限控制用户可以执行哪些类型的操作。管理员权限可完全控制更新和更改任何用户的设置以及许多系统设置。",
+    "adminDashboard": "管理仪表盘",
+    "dashUptime": "运行时间",
+    "dashMemory": "已用内存",
+    "dashMemSys": "系统内存",
+    "dashGoroutines": "协程数"
   },
   "sidebar": {
     "siteSettings": "网站设置",
@@ -684,7 +694,8 @@
     "uploading": "上传{suffix}",
     "paused": "暂停{suffix}",
     "conflict": "冲突{suffix}",
-    "change": "改变{suffix}"
+    "change": "改变{suffix}",
+    "version": "版本"
   },
   "access": {
     "rules": "访问规则",

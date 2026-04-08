@@ -19,6 +19,11 @@
   </div>
   <Notifications />
   <Toast :toasts="toasts" />
+  <transition name="welcome-fade">
+    <div v-if="showWelcome" class="welcome-banner"><!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
+      Welcome back, {{ welcomeName }}<!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
+    </div>
+  </transition>
   <StatusBar :class="{ moveWithSidebar: moveWithSidebar }" />
   <ContextMenu v-if="showContextMenu"></ContextMenu>
   <Tooltip />
@@ -65,10 +70,13 @@ export default {
       width: window.innerWidth,
       itemWeight: 0,
       toasts: [],
+      showWelcome: false,
     };
   },
   mounted() {
     window.addEventListener("resize", this.updateIsMobile);
+    document.body.classList.toggle("dark-mode", getters.isDarkMode());
+    this.applyIconColors(getters.isDarkMode());
     if (getters.eventTheme() == "halloween") {
       document.documentElement.style.setProperty("--primaryColor", "var(--icon-orange)");
     } else if (state.user.themeColor) {
@@ -83,6 +91,14 @@ export default {
     });
     this.reEval()
     this.initialize();
+    // Show welcome banner once user data is available
+    this._welcomeCheck = setInterval(() => {
+      if (this.welcomeName) {
+        clearInterval(this._welcomeCheck);
+        this.showWelcome = true;
+        setTimeout(() => { this.showWelcome = false; }, 5000);
+      }
+    }, 200);
   },
   computed: {
     isOnlyOffice() {
@@ -96,6 +112,15 @@ export default {
     },
     isLoggedIn() {
       return getters.isLoggedIn();
+    },
+    welcomeName() {
+      const user = state.user;
+      if (!user || !user.username) return '';
+      if (user.displayName) return user.displayName;
+      // Derive first name from email or username
+      const localPart = user.username.includes('@') ? user.username.split('@')[0] : user.username;
+      const firstName = localPart.split(/[.\-_]/)[0];
+      return firstName.charAt(0).toUpperCase() + firstName.slice(1);
     },
     moveWithSidebar() {
       return getters.isSidebarVisible() && getters.isStickySidebar();
@@ -136,9 +161,22 @@ export default {
     },
   },
   watch: {
+    isDarkMode(val) {
+      document.body.classList.toggle("dark-mode", val);
+      this.applyIconColors(val);
+    },
     $route() {
       this.reEval()
     },
+    'user.loginMethod': {
+      handler() {
+        this.checkChainFSSubscription();
+      },
+      immediate: true,
+    },
+  },
+  beforeUnmount() {
+    clearInterval(this._welcomeCheck);
   },
   methods: {
     reEval() {
@@ -189,6 +227,37 @@ export default {
             },
           });
         }
+        this.checkChainFSSubscription();
+      }
+    },
+    checkChainFSSubscription() {
+      const user = state.user;
+      console.log('[chainfs] subscription check — loginMethod:', user?.loginMethod, 'subscribed:', user?.chainfsSubscribed);
+      if (!user || user.loginMethod !== 'chainfs') return;
+      if (user.chainfsSubscribed) return;
+      /* eslint-disable @intlify/vue-i18n/no-raw-text */
+      mutations.showHover({
+        name: "generic",
+        props: {
+          title: "Subscription Required",
+          body: `<div style="text-align:center;padding:0.5em 0">
+            <p style="margin-bottom:1em">Your acornAI account does not have an active <strong>Complete</strong> subscription, which is required to protect and store files on ChainFS.</p>
+            <a href="https://acorn.tools" target="_blank" rel="noopener noreferrer" class="button button--block" style="display:inline-block;max-width:16em">
+              Upgrade at acorn.tools
+            </a>
+          </div>`,
+          buttons: [{ label: "Close" }],
+        },
+      });
+      /* eslint-enable @intlify/vue-i18n/no-raw-text */
+    },
+    applyIconColors(dark) {
+      if (dark) {
+        document.documentElement.style.setProperty("--iconBackground", "#1e1f20");
+        document.documentElement.style.setProperty("--iconBackgroundHover", "#3A4147");
+      } else {
+        document.documentElement.style.setProperty("--iconBackground", "#e6f4f5");
+        document.documentElement.style.setProperty("--iconBackgroundHover", "#c2e4e6");
       }
     },
     updateIsMobile() {
@@ -204,6 +273,31 @@ export default {
 </script>
 
 <style>
+.welcome-banner {
+  position: fixed;
+  bottom: 1.5em;
+  left: 1em;
+  background: #ffffff;
+  color: var(--primaryColor);
+  padding: 0.6em 1.2em;
+  border-radius: 99px;
+  font-size: 0.95em;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.welcome-fade-enter-active,
+.welcome-fade-leave-active {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.welcome-fade-enter-from,
+.welcome-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
 .scrollable {
   overflow: scroll !important;
   -webkit-overflow-scrolling: touch;

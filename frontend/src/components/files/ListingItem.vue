@@ -52,6 +52,10 @@
       <p class="modified">
         <time :datetime="modified">{{ getTime() }}</time>
       </p>
+      <p class="created">
+        <time :datetime="created">{{ getCreatedDate() }}</time>
+      </p>
+      <p class="type">{{ getExtension() }}</p>
       <p v-if="hasDuration" class="duration">{{ getDuration() }}</p>
     </div>
     <Icon
@@ -108,6 +112,7 @@ export default {
     "type",
     "size",
     "modified",
+    "created",
     "index",
     "readOnly",
     "path",
@@ -314,6 +319,18 @@ export default {
     getTime() {
       // @ts-ignore
       return getters.getTime(this.modified);
+    },
+    getCreatedDate() {
+      if (!this.created) return "—";
+      const d = new Date(this.created);
+      if (isNaN(d.getTime())) return "—";
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    },
+    getExtension() {
+      if (this.isDir) return "Folder"; // eslint-disable-line @intlify/vue-i18n/no-raw-text
+      if (!this.name || !this.name.includes('.')) return "—";
+      const ext = this.name.split('.').pop();
+      return ext === this.name ? "—" : ext.toUpperCase(); // eslint-disable-line @intlify/vue-i18n/no-raw-text
     },
     getDuration() {
       if (!this.metadata || !this.metadata.duration) {

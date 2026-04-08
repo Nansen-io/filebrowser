@@ -30,7 +30,9 @@
     "saveAndExit": "Uložit a ukončit",
     "keepEditing": "Pokračovat v úpravách",
     "closeAnyway": "Stejně zavřít",
-    "goToItem": "Přejít na položku"
+    "goToItem": "Přejít na položku",
+    "protect": "Chránit",
+    "protectSuccess": "Soubor byl chráněn a uzamčen v ChainFS"
   },
   "download": {
     "downloadFile": "Stáhnout soubor",
@@ -288,7 +290,10 @@
     "renameSuccess": "Položka byla úspěšně přejmenována!",
     "newFileSuccess": "Soubor byl úspěšně vytvořen!",
     "newDirSuccess": "Adresář byl úspěšně vytvořen!",
-    "copyToClipboardFailed": "Nelze zkopírovat do schránky"
+    "copyToClipboardFailed": "Nelze zkopírovat do schránky",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Menší než:",
@@ -456,7 +461,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "např. '/subfolder' - prázdný pro výchozí nastavení",
-    "permissionsHelp": "Oprávnění uživatele řídí přístup k typům akcí, které může uživatel provádět. Přístup administrátora poskytuje plnou kontrolu nad aktualizací a změnou nastavení libovolného uživatele i nad mnoha nastaveními systému."
+    "permissionsHelp": "Oprávnění uživatele řídí přístup k typům akcí, které může uživatel provádět. Přístup administrátora poskytuje plnou kontrolu nad aktualizací a změnou nastavení libovolného uživatele i nad mnoha nastaveními systému.",
+    "adminDashboard": "Administrátorský panel",
+    "dashUptime": "Doba běhu",
+    "dashMemory": "Použitá paměť",
+    "dashMemSys": "Systémová paměť",
+    "dashGoroutines": "Goroutiny"
   },
   "sidebar": {
     "siteSettings": "Nastavení webu",
@@ -684,7 +694,8 @@
     "uploading": "Nahrávání{suffix}",
     "paused": "Pauza{suffix}",
     "conflict": "Konflikt{suffix}",
-    "change": "Změna{suffix}"
+    "change": "Změna{suffix}",
+    "version": "Verze"
   },
   "access": {
     "rules": "Pravidla přístupu",

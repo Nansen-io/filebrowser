@@ -30,7 +30,9 @@
     "saveAndExit": "저장 및 종료",
     "keepEditing": "계속 편집",
     "closeAnyway": "어쨌든 닫기",
-    "goToItem": "항목으로 이동"
+    "goToItem": "항목으로 이동",
+    "protect": "보호",
+    "protectSuccess": "파일이 보호되어 ChainFS에 잠겼습니다"
   },
   "download": {
     "downloadFile": "파일 다운로드",
@@ -217,7 +219,10 @@
     "renameSuccess": "아이템 이름 변경에 성공했습니다!",
     "newFileSuccess": "파일이 성공적으로 생성되었습니다!",
     "newDirSuccess": "디렉토리가 성공적으로 생성되었습니다!",
-    "copyToClipboardFailed": "클립보드에 복사할 수 없습니다."
+    "copyToClipboardFailed": "클립보드에 복사할 수 없습니다.",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "보다 작습니다:",
@@ -325,7 +330,12 @@
       "proxy": "프록시"
     },
     "newUserHintSubFolder": "예: '/subfolder' - 기본값은 비어 있습니다.",
-    "permissionsHelp": "사용자 권한은 사용자가 수행할 수 있는 작업 유형에 대한 액세스를 제어합니다. 관리자 권한은 모든 사용자 설정은 물론 여러 시스템 설정을 업데이트하고 변경할 수 있는 모든 권한을 부여합니다."
+    "permissionsHelp": "사용자 권한은 사용자가 수행할 수 있는 작업 유형에 대한 액세스를 제어합니다. 관리자 권한은 모든 사용자 설정은 물론 여러 시스템 설정을 업데이트하고 변경할 수 있는 모든 권한을 부여합니다.",
+    "adminDashboard": "관리자 대시보드",
+    "dashUptime": "가동 시간",
+    "dashMemory": "사용 메모리",
+    "dashMemSys": "시스템 메모리",
+    "dashGoroutines": "고루틴"
   },
   "sidebar": {
     "siteSettings": "사이트 설정",
@@ -606,7 +616,8 @@
     "uploading": "업로드{suffix}",
     "paused": "일시 중지됨{suffix}",
     "conflict": "충돌{suffix}",
-    "change": "변경{suffix}"
+    "change": "변경{suffix}",
+    "version": "버전"
   },
   "access": {
     "rules": "액세스 규칙",

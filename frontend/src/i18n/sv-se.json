@@ -30,7 +30,9 @@
     "saveAndExit": "Spara och avsluta",
     "keepEditing": "Fortsätt redigera",
     "closeAnyway": "Stäng i alla fall",
-    "goToItem": "Gå till artikel"
+    "goToItem": "Gå till artikel",
+    "protect": "Skydda",
+    "protectSuccess": "Filen är skyddad och låst till ChainFS"
   },
   "download": {
     "downloadFile": "Ladda ner fil",
@@ -217,7 +219,10 @@
     "renameSuccess": "Objektet har bytt namn framgångsrikt!",
     "newFileSuccess": "Filen skapades framgångsrikt!",
     "newDirSuccess": "Katalog skapad framgångsrikt!",
-    "copyToClipboardFailed": "Det går inte att kopiera till urklipp"
+    "copyToClipboardFailed": "Det går inte att kopiera till urklipp",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Mindre än:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "t.ex. \"/undermapp\" - tom för standard",
-    "permissionsHelp": "Användarbehörigheter styr vilka typer av åtgärder som användaren kan utföra. Administratörsbehörighet ger full kontroll över uppdatering och ändring av alla användarinställningar samt många systeminställningar."
+    "permissionsHelp": "Användarbehörigheter styr vilka typer av åtgärder som användaren kan utföra. Administratörsbehörighet ger full kontroll över uppdatering och ändring av alla användarinställningar samt många systeminställningar.",
+    "adminDashboard": "Administratörspanel",
+    "dashUptime": "Drifttid",
+    "dashMemory": "Använt minne",
+    "dashMemSys": "Systemminne",
+    "dashGoroutines": "Goroutines"
   },
   "sidebar": {
     "siteSettings": "System inställningar",
@@ -684,7 +694,8 @@
     "uploading": "Uppladdning{suffix}",
     "paused": "Pausad{suffix}",
     "conflict": "Konflikt{suffix}",
-    "change": "Förändring{suffix}"
+    "change": "Förändring{suffix}",
+    "version": "Version"
   },
   "access": {
     "rules": "Regler för åtkomst",

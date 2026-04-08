@@ -92,6 +92,19 @@
   color: var(--textPrimary) !important;
 }
 
+/* Icon background — override light-mode teal with dark surface.
+   Use multiple selectors to cover all possible dark-mode parent elements. */
+body.dark-mode .icon,
+#main.dark-mode .icon,
+.dark-mode .icon {
+  background: #1e1f20 !important;
+}
+body.dark-mode .listing-item:hover .icon,
+#main.dark-mode .listing-item:hover .icon,
+.dark-mode .listing-item:hover .icon {
+  background: #3A4147 !important;
+}
+
 /* Message */
 .dark-mode .message {
   color: var(--textPrimary);
@@ -192,14 +205,28 @@
 
 /* Size input wrapper */
 .dark-mode .sizeInputWrapper {
-  background: var(--background);
+  background: var(--surfacePrimary, #20292F);
   color: white;
+}
+
+.dark-mode .sizeInput {
+  color: white;
+  background-color: var(--surfaceSecondary, #3A4147);
+}
+
+.dark-mode .sizeInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Button group button */
 .dark-mode .button-group button {
   color: white;
-  background-color:var(--background);
+  background-color: var(--surfacePrimary, #20292F);
+}
+
+.dark-mode .button-group button.active {
+  background-color: var(--primaryColor) !important;
+  color: #ffffff;
 }
 
 /* Result desktop */

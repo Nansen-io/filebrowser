@@ -30,7 +30,9 @@
     "saveAndExit": "Mentés és kilépés",
     "keepEditing": "Szerkesztés folytatása",
     "closeAnyway": "Egyébként bezárni",
-    "goToItem": "Tovább a tételhez"
+    "goToItem": "Tovább a tételhez",
+    "protect": "Védelem",
+    "protectSuccess": "A fájl védett és zárolva van a ChainFS-ben"
   },
   "download": {
     "downloadFile": "Fájl letöltése",
@@ -217,7 +219,10 @@
     "renameSuccess": "Az elem átnevezése sikeres volt!",
     "newFileSuccess": "A fájl sikeresen létrehozva!",
     "newDirSuccess": "A könyvtárat sikeresen létrehoztuk!",
-    "copyToClipboardFailed": "Nem lehet a vágólapra másolni"
+    "copyToClipboardFailed": "Nem lehet a vágólapra másolni",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Kisebb, mint:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "pl. '/subfolder' - üres az alapértelmezéshez",
-    "permissionsHelp": "A felhasználói engedélyek szabályozzák, hogy a felhasználó milyen típusú műveleteket hajthat végre. A rendszergazdai hozzáférés teljes körű ellenőrzést biztosít bármely felhasználó beállításainak, valamint számos rendszerbeállításnak a frissítéséhez és módosításához."
+    "permissionsHelp": "A felhasználói engedélyek szabályozzák, hogy a felhasználó milyen típusú műveleteket hajthat végre. A rendszergazdai hozzáférés teljes körű ellenőrzést biztosít bármely felhasználó beállításainak, valamint számos rendszerbeállításnak a frissítéséhez és módosításához.",
+    "adminDashboard": "Admin irányítópult",
+    "dashUptime": "Üzemidő",
+    "dashMemory": "Használt memória",
+    "dashMemSys": "Rendszermemória",
+    "dashGoroutines": "Goroutine-ok"
   },
   "sidebar": {
     "siteSettings": "Oldalbeállítások",
@@ -606,7 +616,8 @@
     "uploading": "A  feltöltése{suffix}",
     "paused": "Paused{suffix}",
     "conflict": "Konfliktus{suffix}",
-    "change": "Változás{suffix}"
+    "change": "Változás{suffix}",
+    "version": "Verzió"
   },
   "access": {
     "rules": "Hozzáférési szabályok",

@@ -30,7 +30,9 @@
     "saveAndExit": "Сохранить и выйти",
     "keepEditing": "Продолжить редактирование",
     "closeAnyway": "Закрыть в любом случае",
-    "goToItem": "Перейти к пункту"
+    "goToItem": "Перейти к пункту",
+    "protect": "Защитить",
+    "protectSuccess": "Файл защищён и заблокирован в ChainFS"
   },
   "download": {
     "downloadFile": "Скачать файл",
@@ -217,7 +219,10 @@
     "renameSuccess": "Элемент успешно переименован!",
     "newFileSuccess": "Файл создан успешно!",
     "newDirSuccess": "Каталог создан успешно!",
-    "copyToClipboardFailed": "Невозможно скопировать в буфер обмена"
+    "copyToClipboardFailed": "Невозможно скопировать в буфер обмена",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Меньше, чем:",
@@ -325,7 +330,12 @@
       "proxy": "Прокси-сервер"
     },
     "newUserHintSubFolder": "например, '/subfolder' - пустое место по умолчанию",
-    "permissionsHelp": "Разрешения пользователя контролируют, какие действия он может выполнять. Доступ администратора дает полный контроль над обновлением и изменением настроек любого пользователя, а также многих системных настроек."
+    "permissionsHelp": "Разрешения пользователя контролируют, какие действия он может выполнять. Доступ администратора дает полный контроль над обновлением и изменением настроек любого пользователя, а также многих системных настроек.",
+    "adminDashboard": "Панель администратора",
+    "dashUptime": "Время работы",
+    "dashMemory": "Использование памяти",
+    "dashMemSys": "Системная память",
+    "dashGoroutines": "Горутины"
   },
   "sidebar": {
     "siteSettings": "Настройки сайта",
@@ -606,7 +616,8 @@
     "uploading": "Загрузка{suffix}",
     "paused": "Пауза{suffix}",
     "conflict": "Конфликт{suffix}",
-    "change": "Изменить{suffix}"
+    "change": "Изменить{suffix}",
+    "version": "Версия"
   },
   "access": {
     "rules": "Правила доступа",

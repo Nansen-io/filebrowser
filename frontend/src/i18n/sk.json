@@ -30,7 +30,9 @@
     "saveAndExit": "Uložiť a ukončiť",
     "keepEditing": "Pokračujte v úpravách",
     "closeAnyway": "Zavrieť Tak či onak",
-    "goToItem": "Prejsť na položku"
+    "goToItem": "Prejsť na položku",
+    "protect": "Chrániť",
+    "protectSuccess": "Súbor bol chránený a uzamknutý v ChainFS"
   },
   "download": {
     "downloadFile": "Stiahnuť súbor",
@@ -217,7 +219,10 @@
     "renameSuccess": "Položka bola úspešne premenovaná!",
     "newFileSuccess": "Súbor bol úspešne vytvorený!",
     "newDirSuccess": "Adresár bol úspešne vytvorený!",
-    "copyToClipboardFailed": "Nemožnosť kopírovania do schránky"
+    "copyToClipboardFailed": "Nemožnosť kopírovania do schránky",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Menšie ako:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "napr. '/subfolder' - prázdne pre predvolené nastavenie",
-    "permissionsHelp": "Oprávnenia používateľa riadia prístup k typom akcií, ktoré môže používateľ vykonávať. Prístup administrátora poskytuje úplnú kontrolu nad aktualizáciou a zmenou nastavení ktoréhokoľvek používateľa, ako aj nad mnohými systémovými nastaveniami."
+    "permissionsHelp": "Oprávnenia používateľa riadia prístup k typom akcií, ktoré môže používateľ vykonávať. Prístup administrátora poskytuje úplnú kontrolu nad aktualizáciou a zmenou nastavení ktoréhokoľvek používateľa, ako aj nad mnohými systémovými nastaveniami.",
+    "adminDashboard": "Administrátorský panel",
+    "dashUptime": "Čas behu",
+    "dashMemory": "Použitá pamäť",
+    "dashMemSys": "Pamäť systému",
+    "dashGoroutines": "Goroutiny"
   },
   "sidebar": {
     "siteSettings": "Nastavenia stránky",
@@ -606,7 +616,8 @@
     "uploading": "Nahrávanie{suffix}",
     "paused": "Pozastavenie{suffix}",
     "conflict": "Konflikt{suffix}",
-    "change": "Zmena{suffix}"
+    "change": "Zmena{suffix}",
+    "version": "Verzia"
   },
   "access": {
     "rules": "Pravidlá prístupu",

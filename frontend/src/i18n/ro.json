@@ -30,7 +30,9 @@
     "saveAndExit": "Salvare și ieșire",
     "keepEditing": "Continuă editarea",
     "closeAnyway": "Închide oricum",
-    "goToItem": "Du-te la articol"
+    "goToItem": "Du-te la articol",
+    "protect": "Protejează",
+    "protectSuccess": "Fișierul a fost protejat și blocat în ChainFS"
   },
   "download": {
     "downloadFile": "Descarcă fișier",
@@ -217,7 +219,10 @@
     "renameSuccess": "Element redenumit cu succes!",
     "newFileSuccess": "Fișier creat cu succes!",
     "newDirSuccess": "Director creat cu succes!",
-    "copyToClipboardFailed": "Imposibilitatea de a copia în clipboard"
+    "copyToClipboardFailed": "Imposibilitatea de a copia în clipboard",
+    "protectDuration": "Protect file",
+    "protectDurationMessage": "How long should this file be protected?",
+    "protectHours": "hours"
   },
   "search": {
     "smallerThan": "Mai mic decât:",
@@ -325,7 +330,12 @@
       "proxy": "Proxy"
     },
     "newUserHintSubFolder": "de exemplu \"/subfolder\" - gol pentru implicit",
-    "permissionsHelp": "Permisiunile utilizatorului controlează accesul la ce tip de acțiuni poate efectua utilizatorul. Accesul de administrator oferă control deplin pentru actualizarea și modificarea setărilor oricărui utilizator, precum și a multor setări de sistem."
+    "permissionsHelp": "Permisiunile utilizatorului controlează accesul la ce tip de acțiuni poate efectua utilizatorul. Accesul de administrator oferă control deplin pentru actualizarea și modificarea setărilor oricărui utilizator, precum și a multor setări de sistem.",
+    "adminDashboard": "Panou de administrare",
+    "dashUptime": "Timp de funcționare",
+    "dashMemory": "Memorie utilizată",
+    "dashMemSys": "Memorie sistem",
+    "dashGoroutines": "Goroutine"
   },
   "sidebar": {
     "siteSettings": "Setări site",
@@ -606,7 +616,8 @@
     "uploading": "Încărcare{suffix}",
     "paused": "Pauză{suffix}",
     "conflict": "Conflict{suffix}",
-    "change": "Schimbare{suffix}"
+    "change": "Schimbare{suffix}",
+    "version": "Versiune"
   },
   "access": {
     "rules": "Reguli de acces",
