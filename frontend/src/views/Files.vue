@@ -332,7 +332,7 @@ export default {
       mutations.resetSelected();
       mutations.setMultiple(false);
 
-      if (state.shareInfo?.singleFileShare) {
+      if (state.shareInfo?.singleFileShare && !state.isMobile) {
         mutations.setSidebarVisible(true);
       }
       // Fetch share data

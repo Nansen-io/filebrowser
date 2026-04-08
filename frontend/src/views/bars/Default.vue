@@ -61,8 +61,11 @@ export default {
       if (getters.isSettings()) {
         return this.$t("general.settings");
       }
-      if (getters.isShare() && state.shareInfo?.title && state.req.type === "directory") {
-        return state.shareInfo?.title;
+      if (getters.isShare()) {
+        if (state.shareInfo?.title && state.req.type === "directory") {
+          return state.shareInfo?.title;
+        }
+        return "";
       }
       const currentTool = getters.currentTool();
       if (currentTool) {

@@ -98,6 +98,12 @@ export default {
   background-color: #3a7d82 !important;
   --sidebar-bg: #3a7d82;
   color: #f4f8f8 !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+#sidebar:not(.active) {
+  overflow: hidden;
 }
 
 /* sidebar with backdrop-filter support */
@@ -126,6 +132,8 @@ body.rtl nav {
 
 #sidebar.active {
   left: 0;
+  user-select: auto;
+  pointer-events: auto;
 }
 
 #sidebar.rtl nav.active {

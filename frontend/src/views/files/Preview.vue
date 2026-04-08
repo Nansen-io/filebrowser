@@ -55,7 +55,6 @@
                 <div v-else>
                     <p> {{ $t("files.noDownloadAccess") }} </p>
                 </div>
-                <p> {{ req.name }} </p>
             </div>
         </div>
 
@@ -156,7 +155,7 @@ export default {
             const showFullSizeHeic = state.req.type === "image/heic" && !state.isSafari && globalVars.mediaAvailable && !globalVars.disableHeicConversion;
             if (this.pdfConvertable || showFullSizeHeic) {
                 if (getters.isShare()) {
-                    const previewPath = url.removeTrailingSlash(state.req.path);
+                    const previewPath = url.removeTrailingSlash(state.req.path) || "/";
                     return publicApi.getPreviewURL(previewPath, "original");
                 }
                 return (
@@ -171,7 +170,7 @@ export default {
                 // If download is disabled, use the preview endpoint (which respects share auth)
                 // instead of the raw download endpoint (which would 403)
                 if (state.shareInfo?.disableDownload) {
-                    const previewPath = url.removeTrailingSlash(state.req.path);
+                    const previewPath = url.removeTrailingSlash(state.req.path) || "/";
                     return publicApi.getPreviewURL(previewPath, "original");
                 }
                 return publicApi.getDownloadURL(

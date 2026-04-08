@@ -231,8 +231,8 @@ export default {
       }
     },
     checkChainFSSubscription() {
+      if (getters.isShare()) return;
       const user = state.user;
-      console.log('[chainfs] subscription check — loginMethod:', user?.loginMethod, 'subscribed:', user?.chainfsSubscribed);
       if (!user || user.loginMethod !== 'chainfs') return;
       if (user.chainfsSubscribed) return;
       /* eslint-disable @intlify/vue-i18n/no-raw-text */
