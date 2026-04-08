@@ -3,10 +3,12 @@ package http
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/base64"
 	"encoding/json"
 	libError "errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -157,14 +159,18 @@ func logoutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (i
 	if host == "" {
 		host = r.Host
 	}
+	cookieHost, _, err := net.SplitHostPort(host)
+	if err != nil {
+		cookieHost = host // no port present
+	}
 	cookie := &http.Cookie{
 		Name:     "filebrowser_quantum_jwt",
 		Value:    "",
-		Domain:   strings.Split(host, ":")[0],
+		Domain:   cookieHost,
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   getScheme(r) == "https",
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Expires:  time.Unix(0, 0), // Expire immediately
 		MaxAge:   -1,              // Delete cookie
 	}
@@ -197,7 +203,7 @@ func logoutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (i
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(response)
+	err = json.NewEncoder(w).Encode(response)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
@@ -291,14 +297,18 @@ func printToken(w http.ResponseWriter, r *http.Request, user *users.User) (int, 
 	if host == "" {
 		host = r.Host
 	}
+	loginCookieHost, _, err := net.SplitHostPort(host)
+	if err != nil {
+		loginCookieHost = host // no port present
+	}
 	cookie := &http.Cookie{
 		Name:     "filebrowser_quantum_jwt",
 		Value:    signed.Key,
-		Domain:   strings.Split(host, ":")[0], // Set domain to the host without port
+		Domain:   loginCookieHost,
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   getScheme(r) == "https",
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteStrictMode,
 		Expires:  expiresTime,
 	}
 	http.SetCookie(w, cookie)
@@ -407,14 +417,14 @@ func authenticateShareRequest(r *http.Request, l *share.Link) (int, error) {
 				// Use constant-time comparison to prevent timing attacks
 				if hmac.Equal([]byte(signature), []byte(expectedSignature)) {
 					// Token signature is valid, now check if it matches stored token
-					if tokenParam == l.Token {
+					if subtle.ConstantTimeCompare([]byte(tokenParam), []byte(l.Token)) == 1 {
 						return 200, nil
 					}
 				}
 			}
 		} else {
-			// Legacy token format (plain base64) - direct comparison
-			if tokenParam == l.Token {
+			// Legacy token format (plain base64) - constant-time comparison
+			if subtle.ConstantTimeCompare([]byte(tokenParam), []byte(l.Token)) == 1 {
 				return 200, nil
 			}
 		}

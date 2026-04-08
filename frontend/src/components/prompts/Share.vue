@@ -35,14 +35,14 @@
         <table>
           <tbody>
             <tr>
-              <th>#</th> <!-- eslint-disable-line @intlify/vue-i18n/no-raw-text -->
+              <th>{{ fileName }}</th>
               <th>{{ $t("time.unit") }}</th>
               <th></th>
               <th></th>
             </tr>
 
-            <tr v-for="link in links" :key="link.hash">
-              <td>{{ link.hash }}</td>
+            <tr v-for="(link, index) in links" :key="link.hash">
+              <td>{{ index + 1 }}</td>
               <td>
                 <template v-if="link.expire !== 0">{{ humanTime(link.expire) }}</template>
                 <template v-else>{{ $t("general.permanent") }}</template>
@@ -51,12 +51,6 @@
                 <button class="action" @click="editLink(link)" :aria-label="$t('general.edit')"
                   :title="$t('general.edit')">
                   <i class="material-icons">edit</i>
-                </button>
-              </td>
-              <td class="small">
-                <button class="action copy-clipboard" :data-clipboard-text="link.shareURL"
-                  :aria-label="$t('buttons.copyToClipboard')" :title="$t('buttons.copyToClipboard')">
-                  <i class="material-icons">content_paste</i>
                 </button>
               </td>
               <td class="small">
@@ -224,9 +218,10 @@
       :aria-label="$t('general.close')" :title="$t('general.close')">
       {{ $t("general.close") }}
     </button>
-    <button v-if="listing" class="button button--flat button--blue" @click="() => switchListing()"
-      :aria-label="$t('general.new')" :title="$t('general.new')">
-      {{ $t("general.new") }}
+    <button v-if="listing && links.length > 0" class="button button--flat button--blue" @click="copyLink"
+      :aria-label="$t('buttons.copyToClipboard')" :title="$t('buttons.copyToClipboard')">
+      <i class="material-icons">content_paste</i>
+      {{ $t("buttons.copyToClipboard") }}
     </button>
 
     <button v-if="!listing" class="button button--flat button--grey" @click="() => switchListing()"
@@ -243,7 +238,6 @@
 import { notify } from "@/notify";
 import { state, getters, mutations } from "@/store";
 import { shareApi } from "@/api";
-import Clipboard from "clipboard";
 import { fromNow } from "@/utils/moment";
 import { buildItemUrl } from "@/utils/url";
 import ToggleSwitch from "@/components/settings/ToggleSwitch.vue";
@@ -284,8 +278,6 @@ export default {
       unit: "hours",
       /** @type {Share[]} */
       links: [],
-      /** @type {Clipboard | null} */
-      clip: null,
       password: "",
       listing: true,
       allowModify: false,
@@ -385,7 +377,11 @@ export default {
       // Check if we're editing a link and it has a password
       const currentLink = this.isEditMode ? this.link : this.editingLink;
       return currentLink && currentLink.hasPassword;
-    }
+    },
+    fileName() {
+      const path = this.displayPath || this.item?.path || "";
+      return path.split("/").filter(Boolean).pop() || path;
+    },
   },
   watch: {
     listing(isListing) {
@@ -474,7 +470,6 @@ export default {
     }
   },
   mounted() {
-    this.initClipboard();
     // Listen for sidebar links updates from the SidebarLinks prompt
     eventBus.on('shareSidebarLinksUpdated', this.handleSidebarLinksUpdate);
   },
@@ -482,23 +477,15 @@ export default {
     // Clean up event listeners
     eventBus.off('apiKeysChanged', this.reloadApiKeys);
     eventBus.off('shareSidebarLinksUpdated', this.handleSidebarLinksUpdate);
-    // Clean up clipboard
-    if (this.clip) {
-      this.clip.destroy();
-    }
   },
   methods: {
-    initClipboard() {
-      // Destroy existing clipboard first
-      if (this.clip) {
-        this.clip.destroy();
+    copyLink() {
+      const url = this.links[0]?.shareURL;
+      if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+          notify.showSuccessToast(this.$t("success.linkCopied"));
+        });
       }
-
-      // Create new clipboard instance
-      this.clip = new Clipboard(".copy-clipboard");
-      this.clip.on("success", () => {
-        notify.showSuccessToast(this.$t("success.linkCopied"));
-      });
     },
     /**
      * @param {MouseEvent} event
@@ -588,10 +575,6 @@ export default {
         if (!this.isEditMode && !this.editingLink) {
           this.links.push(res);
           this.sort();
-        // reinitialize the clipboard after adding a new link
-        this.$nextTick(() => {
-          this.initClipboard();
-        });
         } else if (this.editingLink) {
           // Update the link in the local list
           const index = this.links.findIndex(l => l.hash === this.editingLink.hash);
@@ -601,10 +584,6 @@ export default {
           this.editingLink = null;
           // emit event to reload shares in settings view
           eventBus.emit('sharesChanged');
-        // Reinitialize clipboard after edit the share
-        this.$nextTick(() => {
-          this.initClipboard();
-        });
         } else {
           // emit event to reload shares in settings view
           eventBus.emit('sharesChanged');
@@ -678,10 +657,6 @@ export default {
       try {
         await shareApi.remove(link.hash);
         this.links = this.links.filter((item) => item.hash !== link.hash);
-        // Reinitialize clipboard after deletion too
-        this.$nextTick(() => {
-          this.initClipboard();
-        });
         // emit event to reload shares in settings view
         eventBus.emit('sharesChanged');
         if (this.links.length === 0) {
