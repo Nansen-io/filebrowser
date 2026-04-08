@@ -248,7 +248,7 @@
     "invalidCredentials": "Invalid credentials provided"
   },
   "share": {
-    "notice": "Shared links can be accessed by anyone who has the link. Add a password to keep your files safe.",
+    "notice": "Shared links can be accessed by anyone who has the link and the password, please ensure you keep your password safe.",
     "disableAnonymous": "Disable anonymous access",
     "disableThumbnails": "Disable Thumbnails",
     "enableAllowedUsernames": "Only share to certain users",

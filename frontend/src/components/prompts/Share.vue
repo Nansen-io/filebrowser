@@ -35,14 +35,14 @@
         <table>
           <tbody>
             <tr>
-              <th>{{ fileName }}</th>
+              <th>{{ $t("general.name", { suffix: "" }) }}</th>
               <th>{{ $t("time.unit") }}</th>
               <th></th>
               <th></th>
             </tr>
 
-            <tr v-for="(link, index) in links" :key="link.hash">
-              <td>{{ index + 1 }}</td>
+            <tr v-for="link in links" :key="link.hash">
+              <td>{{ fileName }}</td>
               <td>
                 <template v-if="link.expire !== 0">{{ humanTime(link.expire) }}</template>
                 <template v-else>{{ $t("general.permanent") }}</template>
@@ -214,15 +214,19 @@
   </div>
 
   <div v-if="!isEditingPath" class="card-action">
-    <button v-if="listing" class="button button--flat button--grey" @click="closeHovers"
-      :aria-label="$t('general.close')" :title="$t('general.close')">
-      {{ $t("general.close") }}
-    </button>
-    <button v-if="listing && links.length > 0" class="button button--flat button--blue" @click="copyLink"
-      :aria-label="$t('buttons.copyToClipboard')" :title="$t('buttons.copyToClipboard')">
-      <i class="material-icons">content_paste</i>
-      {{ $t("buttons.copyToClipboard") }}
-    </button>
+    <div v-if="listing" style="display: flex; align-items: center; width: 100%;">
+      <div style="flex: 1"></div>
+      <button v-if="links.length > 0" class="button button--flat button--blue" @click="copyLink"
+        :aria-label="$t('buttons.copyToClipboard')" :title="$t('buttons.copyToClipboard')">
+        {{ $t("buttons.copyToClipboard") }}
+      </button>
+      <div style="flex: 1; display: flex; justify-content: flex-end">
+        <button class="button button--flat button--grey" @click="closeHovers"
+          :aria-label="$t('general.close')" :title="$t('general.close')">
+          {{ $t("general.close") }}
+        </button>
+      </div>
+    </div>
 
     <button v-if="!listing" class="button button--flat button--grey" @click="() => switchListing()"
       :aria-label="$t('general.cancel')" :title="$t('general.cancel')">
