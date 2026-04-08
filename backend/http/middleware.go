@@ -501,6 +501,11 @@ func withHashFile(fn handleFunc) http.HandlerFunc {
 	return wrapHandler(withHashFileHelper(fn))
 }
 
+// withHashFileRateLimited applies the share rate limiter before hash-file processing.
+func withHashFileRateLimited(fn handleFunc) http.HandlerFunc {
+	return wrapHandler(withShareRateLimit(withHashFileHelper(fn)))
+}
+
 func withAdmin(fn handleFunc) http.HandlerFunc {
 	return wrapHandler(withAdminHelper(fn))
 }
@@ -670,9 +675,14 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(wrappedWriter, r)
 
 		// Existing logging logic for normal requests
+		// Strip the auth query parameter to prevent JWT tokens appearing in logs
 		fullURL := r.URL.Path
 		if r.URL.RawQuery != "" {
-			fullURL += "?" + r.URL.RawQuery
+			q := r.URL.Query()
+			q.Del("auth")
+			if encoded := q.Encode(); encoded != "" {
+				fullURL += "?" + encoded
+			}
 		}
 		truncUser := wrappedWriter.User
 		if truncUser == "" {

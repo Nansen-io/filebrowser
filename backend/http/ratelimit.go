@@ -24,23 +24,33 @@ var loginRateLimiter = &rateLimitStore{
 	limiters: make(map[string]*ipLimiter),
 }
 
+// shareRateLimiter limits public share access attempts to 30 per minute per IP.
+// This prevents brute-forcing share passwords while allowing legitimate bulk access.
+var shareRateLimiter = &rateLimitStore{
+	limiters: make(map[string]*ipLimiter),
+}
+
 func init() {
 	// Periodically clean up stale entries every 5 minutes
 	go func() {
 		for {
 			time.Sleep(5 * time.Minute)
 			loginRateLimiter.cleanup()
+			shareRateLimiter.cleanup()
 		}
 	}()
 }
 
 func (s *rateLimitStore) get(ip string) *rate.Limiter {
+	return s.getWithRate(ip, rate.Every(time.Minute/5), 5)
+}
+
+func (s *rateLimitStore) getWithRate(ip string, r rate.Limit, burst int) *rate.Limiter {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	entry, ok := s.limiters[ip]
 	if !ok {
-		// Allow 5 login attempts per minute per IP, burst of 5
-		entry = &ipLimiter{limiter: rate.NewLimiter(rate.Every(time.Minute/5), 5)}
+		entry = &ipLimiter{limiter: rate.NewLimiter(r, burst)}
 		s.limiters[ip] = entry
 	}
 	entry.lastSeen = time.Now()
@@ -58,22 +68,49 @@ func (s *rateLimitStore) cleanup() {
 	}
 }
 
-// realIP extracts the real client IP, respecting X-Forwarded-For from trusted proxies.
+// isPrivateIP returns true for loopback and RFC-1918/RFC-4193 addresses used
+// by Azure load balancers and reverse proxies. Only requests from these addresses
+// are permitted to set X-Forwarded-For / X-Real-Ip headers.
+func isPrivateIP(ip string) bool {
+	privateRanges := []string{
+		"127.", "::1",        // loopback
+		"10.",                // RFC-1918 class A
+		"192.168.",           // RFC-1918 class C
+		"172.16.", "172.17.", "172.18.", "172.19.",
+		"172.20.", "172.21.", "172.22.", "172.23.",
+		"172.24.", "172.25.", "172.26.", "172.27.",
+		"172.28.", "172.29.", "172.30.", "172.31.", // RFC-1918 class B
+	}
+	for _, prefix := range privateRanges {
+		if strings.HasPrefix(ip, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// realIP extracts the real client IP, respecting X-Forwarded-For only when
+// the immediate peer (RemoteAddr) is a trusted private/proxy address.
 func realIP(r *http.Request) string {
-	if fwd := r.Header.Get("X-Forwarded-For"); fwd != "" {
-		// Take the first (leftmost) IP which is the original client
-		parts := strings.Split(fwd, ",")
-		return strings.TrimSpace(parts[0])
+	// Strip port from RemoteAddr to get the peer IP
+	remoteIP := r.RemoteAddr
+	if idx := strings.LastIndex(remoteIP, ":"); idx != -1 {
+		remoteIP = remoteIP[:idx]
 	}
-	if fwd := r.Header.Get("X-Real-Ip"); fwd != "" {
-		return strings.TrimSpace(fwd)
+
+	// Only trust forwarded headers when the request comes from a private address
+	if isPrivateIP(remoteIP) {
+		if fwd := r.Header.Get("X-Forwarded-For"); fwd != "" {
+			// Take the first (leftmost) IP which is the original client
+			parts := strings.Split(fwd, ",")
+			return strings.TrimSpace(parts[0])
+		}
+		if fwd := r.Header.Get("X-Real-Ip"); fwd != "" {
+			return strings.TrimSpace(fwd)
+		}
 	}
-	// Strip port from RemoteAddr
-	addr := r.RemoteAddr
-	if idx := strings.LastIndex(addr, ":"); idx != -1 {
-		return addr[:idx]
-	}
-	return addr
+
+	return remoteIP
 }
 
 // withLoginRateLimit wraps a handleFunc with per-IP rate limiting.
@@ -82,6 +119,21 @@ func withLoginRateLimit(fn handleFunc) handleFunc {
 	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
 		ip := realIP(r)
 		limiter := loginRateLimiter.get(ip)
+		if !limiter.Allow() {
+			w.Header().Set("Retry-After", "60")
+			return http.StatusTooManyRequests, errTooManyRequests
+		}
+		return fn(w, r, data)
+	}
+}
+
+// withShareRateLimit wraps a handleFunc with per-IP rate limiting for public share endpoints.
+// Allows 30 requests per minute with a burst of 10 to cover normal browsing of a share,
+// while preventing automated password brute-forcing.
+func withShareRateLimit(fn handleFunc) handleFunc {
+	return func(w http.ResponseWriter, r *http.Request, data *requestContext) (int, error) {
+		ip := realIP(r)
+		limiter := shareRateLimiter.getWithRate(ip, rate.Every(time.Minute/30), 10)
 		if !limiter.Allow() {
 			w.Header().Set("Retry-After", "60")
 			return http.StatusTooManyRequests, errTooManyRequests

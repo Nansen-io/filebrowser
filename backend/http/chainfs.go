@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -14,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	gooidc "github.com/coreos/go-oidc/v3/oidc"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gtsteffaniak/filebrowser/backend/chainfs"
 	"github.com/gtsteffaniak/filebrowser/backend/common/settings"
@@ -91,6 +93,7 @@ func chainfsLoginHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 		Path:     "/",
 		MaxAge:   300, // 5 minutes
 		HttpOnly: true,
+		Secure:   getScheme(r) == "https",
 		SameSite: http.SameSiteLaxMode,
 	})
 
@@ -234,11 +237,12 @@ if (hash) {
 		return http.StatusInternalServerError, fmt.Errorf("no ID token received")
 	}
 
-	// Parse ID token (JWT) without verification (Azure already validated it)
-	// In production, you should verify the signature using Azure's public keys
-	claims, err := parseJWTClaims(rawIDToken)
+	// Verify and parse the ID token.
+	// When IssuerUrl is configured, the signature is verified against Azure's public JWKS.
+	// Without it, claims are extracted unverified (less secure — set issuerUrl in config).
+	claims, err := parseAndVerifyIDToken(ctx, rawIDToken, clientID, chainfsConfig.IssuerUrl)
 	if err != nil {
-		logger.Errorf("Failed to parse ID token: %v", err)
+		logger.Errorf("Failed to parse/verify ID token: %v", err)
 		return http.StatusInternalServerError, fmt.Errorf("failed to parse ID token: %w", err)
 	}
 
@@ -269,13 +273,23 @@ if (hash) {
 		expiresAt = time.Now().Add(time.Hour).Unix()
 	}
 
+	// Extract display name (real first name) from JWT claims
+	displayName := extractDisplayName(claims)
+
 	// Login or create user
-	return loginWithChainFsUser(w, r, username, isAdmin, token.AccessToken, token.RefreshToken, expiresAt, fbRedirect)
+	return loginWithChainFsUser(w, r, username, displayName, isAdmin, token.AccessToken, token.RefreshToken, expiresAt, fbRedirect)
 }
 
 // loginWithChainFsUser creates or updates a user and logs them in
-func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username string, isAdmin bool, accessToken, refreshToken string, expiresAt int64, redirect string) (int, error) {
+func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username, displayName string, isAdmin bool, accessToken, refreshToken string, expiresAt int64, redirect string) (int, error) {
 	chainfsConfig := settings.Config.Auth.Methods.ChainFsAuth
+
+	// Check if user already exists in the DB and is already an admin there.
+	// This allows existing admins to log in even when the Azure token lacks the admin role claim.
+	existingUser, existingErr := store.Users.Get(username)
+	if existingErr == nil && existingUser.Permissions.Admin {
+		isAdmin = true
+	}
 
 	// Check subscription — must have Enhanced or Enterprise tier to access acorndrive
 	userInfo, err := chainfs.GetUserInfo(chainfsConfig.ApiBaseUrl, accessToken)
@@ -284,8 +298,8 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		return http.StatusServiceUnavailable, fmt.Errorf("could not verify subscription status, please try again")
 	}
 	subscribed := userInfo.Subscribed || userInfo.EnhancedSubscription
-	logger.Infof("ChainFS subscription for %s: subscribed=%v enhanced=%v enterprise=%v — access=%v", username, userInfo.Subscribed, userInfo.EnhancedSubscription, userInfo.IsEnterprise, subscribed)
-	if !subscribed {
+	logger.Infof("ChainFS subscription for %s: subscribed=%v enhanced=%v enterprise=%v admin=%v — access=%v", username, userInfo.Subscribed, userInfo.EnhancedSubscription, userInfo.IsEnterprise, isAdmin, subscribed || isAdmin)
+	if !subscribed && !isAdmin {
 		loginURL := fmt.Sprintf("%slogin?error=subscription", config.Server.BaseURL)
 		http.Redirect(w, r, loginURL, http.StatusFound)
 		return 0, nil
@@ -304,6 +318,7 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		logger.Infof("Creating new ChainFS user: %s", username)
 		user = &users.User{
 			Username:    username,
+			DisplayName: displayName,
 			LoginMethod: users.LoginMethodChainFs,
 		}
 		settings.ApplyUserDefaults(user)
@@ -363,12 +378,15 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 		user.AzureTokenExpiry = expiresAt
 		user.LoginMethod = users.LoginMethodChainFs
 		user.ChainFSSubscribed = subscribed
+		if displayName != "" {
+			user.DisplayName = displayName
+		}
 
 		if isAdmin {
 			user.Permissions.Admin = true
 		}
 
-		if err := store.Users.Update(user, true, "AzureAccessToken", "AzureRefreshToken", "AzureTokenExpiry", "LoginMethod", "Permissions", "ChainFSSubscribed"); err != nil {
+		if err := store.Users.Update(user, true, "AzureAccessToken", "AzureRefreshToken", "AzureTokenExpiry", "LoginMethod", "Permissions", "ChainFSSubscribed", "DisplayName"); err != nil {
 			logger.Errorf("Failed to update user: %v", err)
 			return http.StatusInternalServerError, err
 		}
@@ -399,7 +417,34 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username strin
 	return 0, nil
 }
 
-// parseJWTClaims parses JWT claims without verification
+// parseAndVerifyIDToken verifies the Azure AD B2C ID token signature when issuerUrl
+// is configured, then returns the claims. Falls back to unverified parsing when
+// issuerUrl is empty (logs a security warning).
+func parseAndVerifyIDToken(ctx context.Context, rawIDToken, clientID, issuerUrl string) (map[string]interface{}, error) {
+	if issuerUrl != "" {
+		provider, err := gooidc.NewProvider(ctx, issuerUrl)
+		if err != nil {
+			return nil, fmt.Errorf("failed to initialise OIDC provider for token verification: %w", err)
+		}
+		verifier := provider.Verifier(&gooidc.Config{ClientID: clientID})
+		idToken, err := verifier.Verify(ctx, rawIDToken)
+		if err != nil {
+			return nil, fmt.Errorf("ID token signature verification failed: %w", err)
+		}
+		var claims map[string]interface{}
+		if err := idToken.Claims(&claims); err != nil {
+			return nil, fmt.Errorf("failed to extract verified claims: %w", err)
+		}
+		return claims, nil
+	}
+
+	// IssuerUrl not configured — parse without signature verification.
+	// Security warning: configure issuerUrl in chainfs settings to enable verification.
+	logger.Warning("ChainFS: IssuerUrl is not set — ID token signature is NOT verified. Set issuerUrl in chainfs config to harden this deployment.")
+	return parseJWTClaims(rawIDToken)
+}
+
+// parseJWTClaims parses JWT claims without verification (fallback only).
 func parseJWTClaims(tokenString string) (map[string]interface{}, error) {
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
@@ -411,6 +456,23 @@ func parseJWTClaims(tokenString string) (map[string]interface{}, error) {
 	}
 
 	return nil, fmt.Errorf("invalid claims type")
+}
+
+// extractDisplayName extracts the user's real first name from JWT claims.
+// It tries given_name, then name, then falls back to parsing the email local-part.
+func extractDisplayName(claims map[string]interface{}) string {
+	for _, key := range []string{"given_name", "name"} {
+		if val, ok := claims[key]; ok {
+			if s, ok := val.(string); ok && s != "" {
+				// Return only the first word in case it's "John Doe"
+				parts := strings.Fields(s)
+				if len(parts) > 0 {
+					return parts[0]
+				}
+			}
+		}
+	}
+	return ""
 }
 
 // extractUsername extracts username from JWT claims

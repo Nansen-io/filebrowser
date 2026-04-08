@@ -221,7 +221,12 @@ func resourceDeleteHandler(w http.ResponseWriter, r *http.Request, d *requestCon
 // @Failure 409 {object} map[string]string "Conflict - Resource already exists"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /api/resources [post]
+const maxUploadBytes = 1 << 30 // 1 GB per request / chunk
+
 func resourcePostHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
+	// Limit request body size to prevent disk exhaustion
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
+
 	path := r.URL.Query().Get("path")
 	unescapedPath := path
 	source := r.URL.Query().Get("source")
@@ -427,6 +432,8 @@ func resourcePostHandler(w http.ResponseWriter, r *http.Request, d *requestConte
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /api/resources [put]
 func resourcePutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
+
 	source := r.URL.Query().Get("source")
 	var err error
 	// decode url encoded source name

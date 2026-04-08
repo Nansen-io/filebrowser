@@ -346,6 +346,7 @@ func (idx *Index) GetDirInfo(dirInfo *os.File, stat os.FileInfo, realPath, adjus
 		itemInfo := &iteminfo.ItemInfo{
 			Name:    file.Name(),
 			ModTime: file.ModTime(),
+			Created: iteminfo.GetCreatedTime(file),
 			Hidden:  hidden,
 		}
 

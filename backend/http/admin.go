@@ -13,13 +13,19 @@ import (
 var serverStartTime = time.Now()
 
 type adminStats struct {
-	Uptime     int64                            `json:"uptime"`
-	Version    string                           `json:"version"`
-	Goroutines int                              `json:"goroutines"`
-	MemAlloc   uint64                           `json:"memAlloc"`
-	MemSys     uint64                           `json:"memSys"`
-	NumGC      uint32                           `json:"numGC"`
-	Sources    map[string]indexing.ReducedIndex `json:"sources"`
+	Uptime        int64                            `json:"uptime"`
+	Version       string                           `json:"version"`
+	Goroutines    int                              `json:"goroutines"`
+	NumCPU        int                              `json:"numCPU"`
+	MemAlloc      uint64                           `json:"memAlloc"`
+	MemSys        uint64                           `json:"memSys"`
+	HeapSys       uint64                           `json:"heapSys"`
+	StackInuse    uint64                           `json:"stackInuse"`
+	TotalAlloc    uint64                           `json:"totalAlloc"`
+	PauseTotalMs  uint64                           `json:"pauseTotalMs"`
+	LastGCSecs    int64                            `json:"lastGCSecs"`
+	NumGC         uint32                           `json:"numGC"`
+	Sources       map[string]indexing.ReducedIndex `json:"sources"`
 }
 
 // adminStatsHandler returns runtime stats for the admin dashboard.
@@ -42,14 +48,25 @@ func adminStatsHandler(w http.ResponseWriter, r *http.Request, d *requestContext
 		}
 	}
 
+	var lastGCSecs int64
+	if ms.LastGC > 0 {
+		lastGCSecs = int64(time.Since(time.Unix(0, int64(ms.LastGC))).Seconds())
+	}
+
 	stats := adminStats{
-		Uptime:     int64(time.Since(serverStartTime).Seconds()),
-		Version:    version.Version,
-		Goroutines: runtime.NumGoroutine(),
-		MemAlloc:   ms.Alloc,
-		MemSys:     ms.Sys,
-		NumGC:      ms.NumGC,
-		Sources:    sourceData,
+		Uptime:       int64(time.Since(serverStartTime).Seconds()),
+		Version:      version.Version,
+		Goroutines:   runtime.NumGoroutine(),
+		NumCPU:       runtime.NumCPU(),
+		MemAlloc:     ms.Alloc,
+		MemSys:       ms.Sys,
+		HeapSys:      ms.HeapSys,
+		StackInuse:   ms.StackInuse,
+		TotalAlloc:   ms.TotalAlloc,
+		PauseTotalMs: ms.PauseTotalNs / 1_000_000,
+		LastGCSecs:   lastGCSecs,
+		NumGC:        ms.NumGC,
+		Sources:      sourceData,
 	}
 
 	return renderJSON(w, r, stats)

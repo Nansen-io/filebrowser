@@ -138,18 +138,18 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	// Create API sub-router for public API endpoints
 	publicAPI := http.NewServeMux()
 	// NEW PUBLIC ROUTES - All publicly accessible endpoints
-	// Public API routes (hash-based authentication)
-	publicAPI.HandleFunc("GET /raw", withHashFile(publicRawHandler))
-	publicAPI.HandleFunc("GET /preview", withTimeout(60*time.Second, withHashFileHelper(publicPreviewHandler)))
-	publicAPI.HandleFunc("GET /resources", withHashFile(publicGetResourceHandler))
+	// Public API routes (hash-based authentication) — rate limited to prevent brute-forcing share passwords
+	publicAPI.HandleFunc("GET /raw", withHashFileRateLimited(publicRawHandler))
+	publicAPI.HandleFunc("GET /preview", withTimeout(60*time.Second, withShareRateLimit(withHashFileHelper(publicPreviewHandler))))
+	publicAPI.HandleFunc("GET /resources", withHashFileRateLimited(publicGetResourceHandler))
 	publicAPI.HandleFunc("GET /users", withUser(userGetHandler))
-	publicAPI.HandleFunc("POST /onlyoffice/callback", withHashFile(onlyofficeCallbackHandler))
-	publicAPI.HandleFunc("GET /onlyoffice/callback", withHashFile(onlyofficeCallbackHandler))
-	publicAPI.HandleFunc("GET /onlyoffice/config", withHashFile(onlyofficeClientConfigGetHandler))
-	publicAPI.HandleFunc("POST /resources", withHashFile(publicUploadHandler))
-	publicAPI.HandleFunc("PUT /resources", withHashFile(publicPutHandler))
-	publicAPI.HandleFunc("DELETE /resources", withHashFile(publicDeleteHandler))
-	publicAPI.HandleFunc("PATCH /resources", withHashFile(publicPatchHandler))
+	publicAPI.HandleFunc("POST /onlyoffice/callback", withHashFileRateLimited(onlyofficeCallbackHandler))
+	publicAPI.HandleFunc("GET /onlyoffice/callback", withHashFileRateLimited(onlyofficeCallbackHandler))
+	publicAPI.HandleFunc("GET /onlyoffice/config", withHashFileRateLimited(onlyofficeClientConfigGetHandler))
+	publicAPI.HandleFunc("POST /resources", withHashFileRateLimited(publicUploadHandler))
+	publicAPI.HandleFunc("PUT /resources", withHashFileRateLimited(publicPutHandler))
+	publicAPI.HandleFunc("DELETE /resources", withHashFileRateLimited(publicDeleteHandler))
+	publicAPI.HandleFunc("PATCH /resources", withHashFileRateLimited(publicPatchHandler))
 	publicAPI.HandleFunc("GET /shareinfo", withOrWithoutUser(shareInfoHandler))
 
 	// Admin routes

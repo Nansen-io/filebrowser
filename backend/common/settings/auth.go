@@ -93,6 +93,7 @@ type ChainFsConfig struct {
 	CreateUser      bool   `json:"createUser"`      // create user if not exists
 	AdminClaim      string `json:"adminClaim"`      // claim to check for admin status (e.g., "roles" or "groups")
 	AdminClaimValue string `json:"adminClaimValue"` // value that grants admin privileges (e.g., "admin")
+	IssuerUrl       string `json:"issuerUrl"`       // Azure AD B2C issuer URL for ID token signature verification (recommended). Format: https://<tenant>.b2clogin.com/<tenant-id>/v2.0/
 }
 
 // ValidateOidcAuth processes the OIDC callback and retrieves user identity

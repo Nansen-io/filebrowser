@@ -66,6 +66,7 @@ type User struct {
 	DisableSettings bool                 `json:"disableSettings"`
 	ID              uint                 `storm:"id,increment" json:"id"`
 	Username        string               `storm:"unique" json:"username"`
+	DisplayName     string               `json:"displayName,omitempty"` // real name extracted from identity provider
 	Scopes          []SourceScope        `json:"scopes"`
 	Scope           string               `json:"scope,omitempty"`
 	LockPassword    bool                 `json:"lockPassword"`

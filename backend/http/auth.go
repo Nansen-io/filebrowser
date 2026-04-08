@@ -162,6 +162,8 @@ func logoutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (i
 		Value:    "",
 		Domain:   strings.Split(host, ":")[0],
 		Path:     "/",
+		HttpOnly: true,
+		Secure:   getScheme(r) == "https",
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Unix(0, 0), // Expire immediately
 		MaxAge:   -1,              // Delete cookie
@@ -220,9 +222,18 @@ func signupHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (i
 		return http.StatusMethodNotAllowed, fmt.Errorf("signup is disabled")
 	}
 
-	// Get credentials from query parameters
+	// Get credentials — password from header (preferred) or query string (fallback)
 	username := r.URL.Query().Get("username")
-	password := r.URL.Query().Get("password")
+	password := r.Header.Get("X-Password")
+	if password == "" {
+		password = r.URL.Query().Get("password")
+	} else {
+		var err error
+		password, err = url.QueryUnescape(password)
+		if err != nil {
+			return http.StatusBadRequest, fmt.Errorf("invalid password encoding")
+		}
+	}
 
 	// Validate that we have both username and password
 	if username == "" || password == "" {
@@ -285,10 +296,10 @@ func printToken(w http.ResponseWriter, r *http.Request, user *users.User) (int, 
 		Value:    signed.Key,
 		Domain:   strings.Split(host, ":")[0], // Set domain to the host without port
 		Path:     "/",
+		HttpOnly: true,
+		Secure:   getScheme(r) == "https",
 		SameSite: http.SameSiteLaxMode,
 		Expires:  expiresTime,
-		// HttpOnly: true, // Cannot use HttpOnly since frontend needs to read cookie for renew operations
-		// Secure: true, // Enable this in production with HTTPS
 	}
 	http.SetCookie(w, cookie)
 
