@@ -2,8 +2,8 @@ package http
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -109,18 +109,23 @@ func protectHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (
 		return http.StatusInternalServerError, fmt.Errorf("failed to stat file: %w", err)
 	}
 
-	// Upload to ChainFS (segmented if >10MB)
+	// Upload to ChainFS (segmented if >10MB), or simulate if bypass is active
 	var fileGuid string
-	if stat.Size() > segmentThreshold {
-		fileGuid, err = chainfs.UploadFileSegmented(chainfsConfig.ApiBaseUrl, accessToken, stat.Name(), f, stat.Size(), aesPassword)
+	if settings.Env.ChainFsBypass {
+		fileGuid = "bypass-" + utils.InsecureRandomIdentifier(16)
+		logger.Infof("ChainFS bypass active — skipping upload for %s, simulated FileGuid: %s", fileInfo.RealPath, fileGuid)
 	} else {
-		fileGuid, err = chainfs.UploadFile(chainfsConfig.ApiBaseUrl, accessToken, stat.Name(), f, aesPassword)
+		if stat.Size() > segmentThreshold {
+			fileGuid, err = chainfs.UploadFileSegmented(chainfsConfig.ApiBaseUrl, accessToken, stat.Name(), f, stat.Size(), aesPassword)
+		} else {
+			fileGuid, err = chainfs.UploadFile(chainfsConfig.ApiBaseUrl, accessToken, stat.Name(), f, aesPassword)
+		}
+		if err != nil {
+			logger.Errorf("ChainFS upload failed for %s: %v", fileInfo.RealPath, err)
+			return http.StatusBadGateway, fmt.Errorf("ChainFS upload failed: %w", err)
+		}
+		logger.Infof("ChainFS upload succeeded for %s, FileGuid: %s", fileInfo.RealPath, fileGuid)
 	}
-	if err != nil {
-		logger.Errorf("ChainFS upload failed for %s: %v", fileInfo.RealPath, err)
-		return http.StatusBadGateway, fmt.Errorf("ChainFS upload failed: %w", err)
-	}
-	logger.Infof("ChainFS upload succeeded for %s, FileGuid: %s", fileInfo.RealPath, fileGuid)
 
 	// Store FileGuid in xattr
 	if err := unix.Setxattr(fileInfo.RealPath, xattrFileGuid, []byte(fileGuid), 0); err != nil {

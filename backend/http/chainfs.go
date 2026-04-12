@@ -297,8 +297,9 @@ func loginWithChainFsUser(w http.ResponseWriter, r *http.Request, username, disp
 		logger.Infof("Could not fetch ChainFS subscription status for %s: %v", username, err)
 		return http.StatusServiceUnavailable, fmt.Errorf("could not verify subscription status, please try again")
 	}
-	subscribed := userInfo.Subscribed || userInfo.EnhancedSubscription
-	logger.Infof("ChainFS subscription for %s: subscribed=%v enhanced=%v enterprise=%v admin=%v — access=%v", username, userInfo.Subscribed, userInfo.EnhancedSubscription, userInfo.IsEnterprise, isAdmin, subscribed || isAdmin)
+	subscribed := userInfo.IsActive() || settings.Env.ChainFsBypass
+	logger.Infof("ChainFS subscription for %s: enhancedSubscription=%v admin=%v bypass=%v — access=%v",
+		username, userInfo.EnhancedSubscription, isAdmin, settings.Env.ChainFsBypass, subscribed || isAdmin)
 	if !subscribed && !isAdmin {
 		loginURL := fmt.Sprintf("%slogin?error=subscription", config.Server.BaseURL)
 		http.Redirect(w, r, loginURL, http.StatusFound)

@@ -112,7 +112,27 @@ func resourceGetHandler(w http.ResponseWriter, r *http.Request, d *requestContex
 		fileInfo.Path = "/"
 	}
 	if fileInfo.Type == "directory" {
+		// Populate protection status for each file in the listing
+		idx := indexing.GetIndex(source)
+		if idx != nil {
+			for i := range fileInfo.Files {
+				realPath, _, _ := idx.GetRealPath(scopePath, fileInfo.Files[i].Name)
+				if realPath != "" && IsFileProtected(realPath) {
+					fileInfo.Files[i].Protected = true
+					if expiry, ok := ProtectionExpiresAt(realPath); ok {
+						fileInfo.Files[i].ProtectedUntil = time.Unix(expiry, 0).UTC().Format(time.RFC3339)
+					}
+				}
+			}
+		}
 		return renderJSON(w, r, fileInfo)
+	}
+	// Populate protection status for the single file
+	if IsFileProtected(fileInfo.RealPath) {
+		fileInfo.Protected = true
+		if expiry, ok := ProtectionExpiresAt(fileInfo.RealPath); ok {
+			fileInfo.ProtectedUntil = time.Unix(expiry, 0).UTC().Format(time.RFC3339)
+		}
 	}
 	if algo := r.URL.Query().Get("checksum"); algo != "" {
 		idx := indexing.GetIndex(source)

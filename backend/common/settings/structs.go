@@ -36,6 +36,7 @@ type Environment struct {
 	FaviconPath           string `json:"-"` // resolved favicon path (filesystem or embedded)
 	FaviconIsCustom       bool   `json:"-"` // true if favicon is from custom filesystem path
 	FaviconEmbeddedPath   string `json:"-"` // embedded asset path for default favicon
+	ChainFsBypass         bool   `json:"-"` // skip ChainFS subscription check and file writes (for testing)
 }
 
 type Server struct {

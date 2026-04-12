@@ -189,10 +189,15 @@ func createFile(baseUrl, bearerToken string, submission *FileSubmission) (string
 
 // UserInfo holds the relevant subscription fields from GET /api/NansenFile/UserInfo.
 type UserInfo struct {
-	Subscribed            bool   `json:"subscribed"`
-	EnhancedSubscription  bool   `json:"enhancedSubscription"`
-	IsEnterprise          bool   `json:"isEnterprise"`
-	SubscriptionExpires   string `json:"subscriptionExpires"`
+	Subscribed           bool   `json:"subscribed"`
+	EnhancedSubscription bool   `json:"enhancedSubscription"`
+	IsEnterprise         bool   `json:"isEnterprise"`
+	SubscriptionExpires  string `json:"subscriptionExpires"`
+}
+
+// IsActive returns true if the user has an active enhanced subscription.
+func (u *UserInfo) IsActive() bool {
+	return u.EnhancedSubscription
 }
 
 // GetUserInfo fetches the ChainFS user's subscription status using their Bearer token.
@@ -223,6 +228,7 @@ func GetUserInfo(baseUrl, bearerToken string) (*UserInfo, error) {
 	if err := json.Unmarshal(body, &info); err != nil {
 		return nil, fmt.Errorf("failed to parse UserInfo response: %w", err)
 	}
+
 	return &info, nil
 }
 
