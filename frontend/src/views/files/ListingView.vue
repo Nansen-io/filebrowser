@@ -58,6 +58,18 @@
         <div>
           <div class="header card" :class="{ 'dark-mode-item-header': isDarkMode }">
             <p
+              :class="{ active: protectedSorted }"
+              class="protected"
+              role="button"
+              tabindex="0"
+              @click="sort('protected')"
+              title="Sort by Protected status"
+              aria-label="Sort by Protected status"
+            >
+              <i class="material-icons">lock</i>
+              <i class="material-icons sort-icon">{{ protectedIcon }}</i>
+            </p>
+            <p
               :class="{ active: nameSorted }"
               class="name"
               role="button"
@@ -159,6 +171,8 @@
             v-bind:reducedOpacity="item.hidden || isDragging"
             v-bind:hash="shareInfo.hash"
             v-bind:hasPreview="item.hasPreview"
+            v-bind:protected="item.protected"
+            v-bind:protectedUntil="item.protectedUntil"
           />
         </div>
         <div v-if="numFiles > 0">
@@ -184,6 +198,8 @@
             v-bind:hasPreview="item.hasPreview"
             v-bind:metadata="item.metadata"
             v-bind:hasDuration="hasDuration"
+            v-bind:protected="item.protected"
+            v-bind:protectedUntil="item.protectedUntil"
           />
         </div>
 
@@ -363,6 +379,15 @@ export default {
     },
     getMultiple() {
       return state.multiple;
+    },
+    protectedSorted() {
+      return getters.sorting().by === "protected";
+    },
+    protectedIcon() {
+      if (this.protectedSorted && this.ascOrdered) {
+        return "arrow_downward";
+      }
+      return "arrow_upward";
     },
     nameSorted() {
       return getters.sorting().by === "name";
@@ -1102,7 +1127,8 @@ export default {
         (field === "name" && this.nameIcon === "arrow_upward") ||
         (field === "size" && this.sizeIcon === "arrow_upward") ||
         (field === "modified" && this.modifiedIcon === "arrow_upward") ||
-        (field === "duration" && this.durationIcon === "arrow_upward")
+        (field === "duration" && this.durationIcon === "arrow_upward") ||
+        (field === "protected" && this.protectedIcon === "arrow_upward")
       ) {
         asc = true;
       }

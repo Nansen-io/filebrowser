@@ -9,6 +9,13 @@ export function sortedItems(items = [], sortby="name", asc=true) {
         let valueA = a[sortby];
         let valueB = b[sortby];
 
+        // Special handling for protected status (true sorts first when ascending)
+        if (sortby === "protected") {
+            const aVal = a.protected ? 1 : 0;
+            const bVal = b.protected ? 1 : 0;
+            return asc ? bVal - aVal : aVal - bVal;
+        }
+
         // Special handling for duration which is stored in metadata
         if (sortby === "duration") {
             valueA = a.metadata?.duration ?? 0;

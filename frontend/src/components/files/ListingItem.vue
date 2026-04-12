@@ -30,6 +30,9 @@
     @touchend="cancelContext"
     @mouseup="cancelContext"
   >
+    <span class="protected-indicator" @click.prevent.stop>
+      <span class="protected-dot" :class="{ active: isProtected }"></span>
+    </span>
     <div :class="{ 'gallery-div': galleryView }">
       <Icon
         :mimetype="type"
@@ -122,11 +125,18 @@ export default {
     "metadata",
     "hasDuration",
     "displayFullPath",
+    "protected",
+    "protectedUntil",
   ],
   computed: {
     displayName() {
       // If displayFullPath is true, show the full path, otherwise just the name
       return this.displayFullPath ? this.path : this.name;
+    },
+    isProtected() {
+      if (!this.protected) return false;
+      if (!this.protectedUntil) return true;
+      return new Date(this.protectedUntil) > new Date();
     },
     galleryView() {
       return getters.viewMode() === "gallery";

@@ -299,6 +299,77 @@ body.rtl #listingView {
   align-items: center;
 }
 
+/* ── Protected indicator column ── */
+#listingView.list .listing-item .protected-indicator,
+#listingView.compact .listing-item .protected-indicator {
+  width: 1.5em;
+  margin-right: 1.5em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#listingView .header .protected {
+  width: 3.5em;
+  margin-right: 1.5em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  font-weight: 700;
+  cursor: pointer;
+  gap: 0.1em;
+}
+
+#listingView .header .protected .material-icons:first-child {
+  font-size: 1em;
+  opacity: 0.5;
+}
+
+#listingView .header .protected .sort-icon {
+  font-size: 1em;
+  opacity: 0;
+  transition: .1s ease all;
+}
+
+#listingView .header .protected:hover .sort-icon,
+#listingView .header .protected.active .sort-icon {
+  opacity: 1;
+}
+
+#listingView .header .protected.active {
+  font-weight: bold;
+}
+
+.protected-indicator {
+  pointer-events: none;
+}
+
+.protected-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid #ccc;
+  background: transparent;
+  display: block;
+  flex-shrink: 0;
+}
+
+.protected-dot.active {
+  background: #4caf50;
+  border-color: #4caf50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+}
+
+/* Hide in gallery/icons views */
+#listingView.gallery .listing-item .protected-indicator,
+#listingView.icons .listing-item .protected-indicator,
+#listingView.normal .listing-item .protected-indicator {
+  display: none;
+}
+
 /* ── Column widths: all widths match between header and rows ── */
 #listingView .header .name,
 #listingView.list .listing-item .name,
