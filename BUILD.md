@@ -1,41 +1,19 @@
 # Build & Development Guide
 
-This guide covers building, testing, and developing the FileBrowser Quantum - ChainFS Integration Fork.
+This guide covers building, testing, developing, and deploying AcornDrive.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
-  - [Required Software](#required-software)
-  - [Optional Tools](#optional-tools)
 - [Quick Start (DEV Build)](#quick-start-dev-build)
-  - [Frontend](#frontend)
-  - [Backend](#backend)
-  - [Run](#run)
 - [Running the Application](#running-the-application)
-  - [Configuration Files](#configuration-files)
 - [Misc Info](#misc-info)
-  - [Command-line flags](#command-line-flags)
-  - [Default Ports](#default-ports)
-  - [Accessing the Application](#accessing-the-application)
-  - [Initial Admin User](#initial-admin-user)
 - [Testing](#testing)
-  - [Backend](#backend-1)
-  - [Frontend](#frontend-1)
-  - [Database](#database)
 - [Troubleshooting](#troubleshooting)
-  - [Frontend build fails](#frontend-build-fails)
-  - [Backend build](#backend-build)
-  - [Go module issues](#go-module-issues)
-  - [Common Runtime Issues](#common-runtime-issues)
-    - ["Auth Methods: [password]" instead of "Auth Methods: [chainfs]"](#auth-methods-password-instead-of-chainfs)
-    - [Invalid redirect URI](#invalid-redirect-uri)
-    - ["User does not exist"](#user-does-not-exist)
-    - [Port already in use](#port-already-in-use)
-    - [Database locked](#database-locked)
-  - [Viewing Logs](#viewing-logs)
-- [Building for Production](#building-for-production)
+- [Azure Deployment](#azure-deployment)
+  - [Infrastructure Overview](#infrastructure-overview)
+  - [Azure Infrastructure Setup (Portal)](#azure-infrastructure-setup-portal)
+  - [GitHub Actions CI/CD](#github-actions-cicd)
 - [Useful Commands](#useful-commands)
-- [Additional Resources](#additional-resources)
-- [Support](#support)
 
 ---
 
@@ -49,7 +27,7 @@ This guide covers building, testing, and developing the FileBrowser Quantum - Ch
 - Node.js 18+ (LTS recommended)
 - npm 9+ or yarn
 
-**Operating System:** 
+**Operating System:**
 - Linux
 
 ---
@@ -74,12 +52,11 @@ cd /home/mem/git/filebrowser/backend
 # Development build (use this by default)
 go build -o filebrowser
 
-# Production build (optimized), only use for deployment to azure (not ready yet)
+# Production build (optimized), only use for deployment
 go build -ldflags="-s -w" -o filebrowser
-
 ```
 
-### Run 
+### Run
 
 note: requires frontend and backend to have been built.
 
@@ -90,14 +67,13 @@ cd /home/mem/git/filebrowser/backend
 
 Open browser to: `http://localhost:8080`
 
-
 ---
 
 ## Running the Application
 
 The application uses YAML configuration files:
 
-- `config.yaml` - Default configuration (uses DEV settings)
+- `config.yaml` - Default configuration
 - `config.dev.yaml` - DEV environment (points to nansendev.azurewebsites.net)
 - `config.uat.yaml` - UAT environment (points to nansenuat.azurewebsites.net)
 - `config.prod.yaml` - PROD environment (points to nansenprod.azurewebsites.net)
@@ -107,13 +83,8 @@ The application uses YAML configuration files:
 ```bash
 cd /home/mem/git/filebrowser/backend
 
-# DEV environment (for all testing use DEV config)
 ./filebrowser -c config.dev.yaml
-
-# UAT environment
 ./filebrowser -c config.uat.yaml
-
-# PROD environment
 ./filebrowser -c config.prod.yaml
 ```
 
@@ -124,15 +95,16 @@ cd /home/mem/git/filebrowser/backend
 ### Command-line flags
 
 ```bash
-./filebrowser -h              # Show help
-./filebrowser -c              # Print default config
-./filebrowser version         # Show version info
+./filebrowser -h                  # Show help
+./filebrowser -c                  # Print default config
+./filebrowser version             # Show version info
+./filebrowser --chainfs-bypass    # Skip ChainFS subscription check and blockchain writes (testing only)
 ```
 
 ### Default Ports
 
 - **DEV/UAT:** `8080`
-- **PROD (main config):** `80`
+- **PROD:** `80`
 
 ### Accessing the Application
 
@@ -143,13 +115,13 @@ After starting the server:
 
 ### Initial Admin User
 
-**Password authentication (disabled by default):**
-- Username: `admin`
-- Password: `admin`
-
 **ChainFS authentication (enabled by default):**
 - Users are auto-created on first Azure AD B2C login
 - Admin status determined by Azure AD roles/groups claim
+
+**Password authentication (disabled by default):**
+- Username: `admin`
+- Password: `admin`
 
 ---
 
@@ -160,19 +132,10 @@ After starting the server:
 ```bash
 cd /home/mem/git/filebrowser/backend
 
-# Run all tests
 go test ./...
-
-# Run tests with coverage
 go test -cover ./...
-
-# Run tests for specific package
 go test ./http/...
-
-# Run tests with verbose output
 go test -v ./...
-
-# Run specific test
 go test -run TestChainFsLogin ./http/...
 ```
 
@@ -181,31 +144,17 @@ go test -run TestChainFsLogin ./http/...
 ```bash
 cd /home/mem/git/filebrowser/frontend
 
-# Run unit tests
 npm run test
-
-# Run tests with coverage
 npm run test:coverage
-
-# Run tests in watch mode
 npm run test:watch
 ```
 
 ### Database
 
-note: this is used to see if users exist
-
 ```bash
-# View database contents (requires sqlite3)
 sqlite3 database.db
-
-# List all users
 sqlite> SELECT id, username, loginMethod FROM users;
-
-# Check Azure token fields (encrypted)
 sqlite> SELECT username, azureAccessToken, azureTokenExpiry FROM users;
-
-# Exit
 sqlite> .quit
 ```
 
@@ -216,23 +165,19 @@ sqlite> .quit
 ### Frontend build fails
 
 ```bash
-# Clear node_modules and reinstall
 cd /home/mem/git/filebrowser/frontend
 rm -rf node_modules package-lock.json
 npm install
 npm run build
 ```
 
-### Backend build
-
-**fails with "template: pattern matches no files"**
+### Backend build fails with "template: pattern matches no files"
 
 ```bash
-# Frontend not built yet
+# Frontend not built yet — build it first
 cd /home/mem/git/filebrowser/frontend
 npm run build
 
-# Then rebuild backend
 cd /home/mem/git/filebrowser/backend
 go build -o filebrowser
 ```
@@ -250,134 +195,266 @@ go build -o filebrowser
 
 #### "Auth Methods: [password]" instead of "Auth Methods: [chainfs]"
 
-**Problem:** ChainFS auth not enabled in config
-
-**Solution:**
 ```yaml
 # config.dev.yaml
 auth:
   methods:
     chainfs:
-      enabled: true  # Must be true
+      enabled: true
     password:
-      enabled: false # Must be false
+      enabled: false
 ```
 
-#### Invalid redirect URI" 
+#### "Invalid redirect URI" from Azure AD B2C
 
-from Azure AD B2C
-
-**Problem:** Redirect URI not registered in Azure AD B2C
-
-**Solution:**
-- Register callback URL in Azure AD B2C application settings:
-  ```
-  http://localhost:8080/api/auth/chainfs/callback
-  ```
-- Ensure exact match (protocol, domain, port, path)
+Register this callback URL in Azure AD B2C application settings:
+```
+http://localhost:8080/api/auth/chainfs/callback
+```
 
 #### "User does not exist"
 
-**Problem:** `createUser: false` but user not in database
-
-**Solution:**
 ```yaml
-# config.dev.yaml
 auth:
   methods:
     chainfs:
-      createUser: true  # Enable auto-user creation
+      createUser: true
 ```
 
 #### Port already in use
 
-**Problem:** Another process using port 8080
-
-**Solution:**
 ```bash
-# its probably just an old copy of filebrowser running
-
-# first, just run killall
 killall filebrowser
-
-# check if port is still in use
 netstat -tupln | grep 8080
-
-# if a different process ask human to assist
 ```
 
 #### Database locked
 
-**Problem:** Multiple FileBrowser instances accessing same database
-
-**Solution:**
-
 ```bash
-# kill all copies of filebrowser
 killall filebrowser
-
-# delete files
 cd /home/mem/git/filebrowser/backend
 rm database.db-shm database.db-wal
-
-# Restart FileBrowser
 ```
 
----
+### Viewing Logs
 
-## Viewing Logs
-
-**Enable verbose logging:**
 ```yaml
-# config.yaml
 server:
   logging:
     - levels: "debug|info|warning|error"
 ```
 
-**Log locations:**
-- Console output (stdout/stderr)
-- No default log files (logs to console only)
-
 ---
 
-## Building for Production
+## Azure Deployment
 
-```bash
-# 1. Build frontend (production mode)
-cd /home/mem/git/filebrowser/frontend
-npm install --production
-npm run build
+### Infrastructure Overview
 
-# 2. Build backend (optimized)
-cd /home/mem/git/filebrowser/backend
-go build -ldflags="-s -w" -o filebrowser
-
-# 3. Prepare distribution
-mkdir -p dist
-cp filebrowser dist/
-cp config.prod.yaml dist/config.yaml
-
-# 4. Create tarball
-cd dist
-tar -czf filebrowser-chainfs-v1.0.0.tar.gz *
 ```
+Custom Domain (app.acorndrive.com)
+        │
+        ▼
+Azure Front Door Standard
+  (SSL, CDN, WAF, custom domain)
+        │
+        ▼
+Azure Container App  ←── acorntoolsregistry (ACR)
+  Go binary (port 8080)
+  config via FILEBROWSER_CONFIG env var
+        │
+        ├── acorndrive-srv  (NFS, 100 GiB) → /srv   user files
+        └── acorndrive-data (NFS, 32 GiB)  → /data  database + config
+```
+
+**Resource group:** `rg-acorntools`
+**Container registry:** `acorntoolsregistry`
+**Storage account:** `acorndrive`
+
+Three independent environments (DEV / UAT / PROD) each get their own Container App and config file.
+
+### Azure Infrastructure Setup (Portal)
+
+#### Step 1 — Storage Account (acorndrive)
+
+Already created. Shares required:
+
+| Share | Protocol | Size |
+|---|---|---|
+| acorndrive-srv | NFS | 100 GiB |
+| acorndrive-data | NFS | 32 GiB |
+
+To enable NFS: **Settings → Configuration → Secure transfer required → Disabled**
+
+Upload the appropriate config file to `acorndrive-data`:
+- Go to **Storage browser → File shares → acorndrive-data → Browse → Upload**
+- Upload `config.prod.yaml` (or `config.uat.yaml` / `config.dev.yaml` as needed)
+
+#### Step 2 — Container Apps Environment
+
+1. Search **Container Apps Environments** → **Create**
+2. Name: `acorndrive-env`
+3. Resource group: `rg-acorntools`
+4. Region: Australia Southeast
+5. On the **Workload profiles** tab: select **Consumption only**
+6. Click **Create**
+
+After creation, register both storage mounts:
+- Go to `acorndrive-env` → **Storage** → **Add**
+- Storage name: `srv`, Storage account: `acorndrive`, File share: `acorndrive-srv`, Access mode: **Read/Write**
+- Repeat: Storage name: `data`, File share: `acorndrive-data`, Access mode: **Read/Write**
+
+#### Step 3 — Container App (one per environment)
+
+1. Search **Container Apps** → **Create**
+2. Name: `acorndrive-prod` (or `-uat`, `-dev`)
+3. Resource group: `rg-acorntools`
+4. Container Apps Environment: `acorndrive-env`
+5. On **Container** tab:
+   - Image source: **Azure Container Registry**
+   - Registry: `acorntoolsregistry`
+   - Image: `acorndrive`
+   - Tag: `prod` (or `uat`, `dev`)
+   - Environment variable: `FILEBROWSER_CONFIG` = `/data/config.prod.yaml`
+6. On **Volumes** tab → **Add volume**:
+   - Name: `srv`, Volume type: **Azure file share**, Storage: `srv`
+   - Name: `data`, Volume type: **Azure file share**, Storage: `data`
+7. On **Volume mounts** tab:
+   - Mount `srv` → `/srv`
+   - Mount `data` → `/data`
+8. On **Ingress** tab: Enable ingress, Port `8080`, External traffic
+9. Click **Create**
+
+#### Step 4 — Entra ID App Registration (for GitHub Actions)
+
+1. **Microsoft Entra ID → App registrations → New registration**
+   - Name: `acorndrive-github-actions`
+   - Click **Register**
+2. Copy: **Application (client) ID** and **Directory (tenant) ID**
+3. Go to **Subscriptions** and copy your **Subscription ID**
+4. Back on the app registration → **Certificates & secrets → Federated credentials → Add credential**
+   - Scenario: **GitHub Actions**
+   - Organization: your GitHub org/username
+   - Repository: your repo name
+   - Entity type: **Branch**
+
+   Add one credential per environment:
+
+   | Branch | Name |
+   |---|---|
+   | `dev` | `github-dev` |
+   | `uat` | `github-uat` |
+   | `main` | `github-prod` |
+
+5. **Assign roles:**
+   - On `acorntoolsregistry` → **Access control (IAM) → Add role assignment → AcrPush** → assign to `acorndrive-github-actions`
+   - On `rg-acorntools` → **Access control (IAM) → Add role assignment → Contributor** → assign to `acorndrive-github-actions`
+
+#### Step 5 — GitHub Repository Secrets
+
+**Settings → Secrets and variables → Actions → New repository secret:**
+
+| Name | Value |
+|---|---|
+| `AZURE_CLIENT_ID` | Application (client) ID |
+| `AZURE_TENANT_ID` | Directory (tenant) ID |
+| `AZURE_SUBSCRIPTION_ID` | Subscription ID |
+
+### GitHub Actions CI/CD
+
+Create `.github/workflows/deploy.yml` in the repo:
+
+```yaml
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main, uat, dev]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  REGISTRY: acorntoolsregistry.azurecr.io
+  IMAGE: acorndrive
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set environment from branch
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+            echo "CONTAINER_APP=acorndrive-prod" >> $GITHUB_ENV
+          elif [ "${{ github.ref_name }}" = "uat" ]; then
+            echo "ENV=uat" >> $GITHUB_ENV
+            echo "CONTAINER_APP=acorndrive-uat" >> $GITHUB_ENV
+          else
+            echo "ENV=dev" >> $GITHUB_ENV
+            echo "CONTAINER_APP=acorndrive-dev" >> $GITHUB_ENV
+          fi
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to ACR
+        run: az acr login --name acorntoolsregistry
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build backend
+        run: |
+          cd backend
+          go build -ldflags="-s -w" -o filebrowser
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t $REGISTRY/$IMAGE:$ENV -f _docker/Dockerfile .
+          docker push $REGISTRY/$IMAGE:$ENV
+
+      - name: Deploy to Container App
+        run: |
+          az containerapp update \
+            --name $CONTAINER_APP \
+            --resource-group rg-acorntools \
+            --image $REGISTRY/$IMAGE:$ENV
+```
+
+**Deployment flow:**
+- Push to `dev` → auto-deploys to `acorndrive-dev`
+- Push to `uat` → auto-deploys to `acorndrive-uat`
+- Push to `main` → auto-deploys to `acorndrive-prod`
 
 ---
 
 ## Useful Commands
 
 ```bash
-# Check Go version
 go version
-
-# Check Node version
 node --version
-
-# Check npm version
 npm --version
-
-# View FileBrowser version
 ./filebrowser version
 
 # Clean build artifacts
@@ -389,17 +466,8 @@ cd frontend && rm -rf dist node_modules
 
 ## Additional Resources
 
-- **Main Documentation:** [Claude.md](Claude.md)
+- **Fork tracking:** [Fork.md](Fork.md)
 - **Original FileBrowser:** https://github.com/gtsteffaniak/filebrowser
-- **ChainFS API Docs:** Check Swagger endpoints at ChainFS API URLs
+- **ChainFS API Docs:** Swagger endpoints at ChainFS API URLs
 - **Vue.js 3 Docs:** https://vuejs.org/
 - **Go Documentation:** https://golang.org/doc/
-
----
-
-## Support
-
-For upstream FileBrowser issues:
-- Original repository: https://github.com/gtsteffaniak/filebrowser
-- Documentation: https://github.com/gtsteffaniak/filebrowser/wiki
-

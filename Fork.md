@@ -64,27 +64,38 @@ This is a fork of [FileBrowser Quantum](https://github.com/gtsteffaniak/filebrow
 
 ## Future Priorities
 
-### Priority 2: ChainFS File Sync (Planned)
+### Priority 2: ChainFS File Protection (Completed)
 
-Add right-click menu options to sync files to ChainFS blockchain storage:
-- "Store on ChainFS" - Upload file to blockchain
-- "Update on ChainFS" - Sync changes to existing blockchain file
+Right-click → Protect uploads a file to ChainFS and marks it as protected:
+- Uploads file to ChainFS (segmented for files >10MB)
+- Stores FileGuid and expiry in BoltDB (not xattrs — SMB/NFS compatible)
+- Makes file read-only on disk
+- Protected indicator (green dot) shown in file list
+- Protected column is sortable
+- Protected files cannot be deleted or moved until expiry
+- `--chainfs-bypass` flag skips ChainFS upload and subscription check (testing)
 
-**Key Concepts:**
-- **genesisGuid:** First revision GUID in file history (immutable identifier)
-- ChainFS maintains complete file version history
-- Local sync metadata stored in FileBrowser's BoltDB database
+**Key files:**
+- `backend/database/protection/protection.go` — BoltDB storage for protection records
+- `backend/http/protect.go` — protectHandler, IsFileProtected, ProtectionExpiresAt
+- `backend/http/resource.go` — populates Protected/ProtectedUntil fields on listing
+- `frontend/src/components/files/ListingItem.vue` — green dot indicator
+- `frontend/src/views/files/ListingView.vue` — protected column + sort
+- `frontend/src/css/listing.css` — column styles
 
-**Status:** Planned (after authentication completion)
-
-### Priority 3: Azure Hosting (Planned)
+### Priority 3: Azure Hosting (In Progress)
 
 Deploy three instances to Azure:
-- DEV → Points to ChainFS DEV environment
-- UAT → Points to ChainFS UAT environment
-- PROD → Points to ChainFS PROD environment
+- DEV → Points to ChainFS DEV environment (nansendev.azurewebsites.net)
+- UAT → Points to ChainFS UAT environment (nansenuat.azurewebsites.net)
+- PROD → Points to ChainFS PROD environment (nansenprod.azurewebsites.net)
 
-**Status:** Planned (after Priority 2 completion)
+**Infrastructure:** Azure Container Apps + Azure Files NFS + acorntoolsregistry (ACR)
+**Resource group:** rg-acorntools
+**Storage account:** acorndrive (shares: acorndrive-srv 100GiB, acorndrive-data 32GiB)
+**CI/CD:** GitHub Actions with OIDC auth (see BUILD.md)
+
+**Status:** Infrastructure being set up. GitHub Actions workflow pending creation.
 
 ---
 

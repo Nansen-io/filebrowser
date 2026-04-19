@@ -2,7 +2,6 @@ package http
 
 import (
 	"crypto/sha256"
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"net/http"
@@ -18,11 +17,8 @@ import (
 	"github.com/gtsteffaniak/filebrowser/backend/common/utils"
 	"github.com/gtsteffaniak/filebrowser/backend/database/users"
 	"github.com/gtsteffaniak/go-logger/logger"
-	"golang.org/x/sys/unix"
 )
 
-const xattrFileGuid = "user.chainfs.fileguid"
-const xattrProtectExpiry = "user.chainfs.protectexpiry"
 const segmentThreshold = 10 * 1024 * 1024 // 10 MB
 
 // protectHandler uploads a file to ChainFS and makes it read-only on disk.
@@ -127,17 +123,10 @@ func protectHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (
 		logger.Infof("ChainFS upload succeeded for %s, FileGuid: %s", fileInfo.RealPath, fileGuid)
 	}
 
-	// Store FileGuid in xattr
-	if err := unix.Setxattr(fileInfo.RealPath, xattrFileGuid, []byte(fileGuid), 0); err != nil {
-		return http.StatusInternalServerError, fmt.Errorf("failed to set xattr: %w", err)
-	}
-
-	// Store protection expiry as a little-endian int64 Unix timestamp
+	// Persist protection metadata to database
 	expiry := time.Now().Add(time.Duration(hours) * time.Hour).Unix()
-	expiryBuf := make([]byte, 8)
-	binary.LittleEndian.PutUint64(expiryBuf, uint64(expiry))
-	if err := unix.Setxattr(fileInfo.RealPath, xattrProtectExpiry, expiryBuf, 0); err != nil {
-		return http.StatusInternalServerError, fmt.Errorf("failed to set expiry xattr: %w", err)
+	if err := store.Protection.Save(fileInfo.RealPath, fileGuid, expiry); err != nil {
+		return http.StatusInternalServerError, fmt.Errorf("failed to save protection record: %w", err)
 	}
 
 	// Make the file read-only
@@ -155,35 +144,29 @@ func deriveUserAESPassword(user *users.User) string {
 	return hex.EncodeToString(hash[:])
 }
 
-// IsFileProtected returns true if the file at realPath has a ChainFS FileGuid xattr.
+// IsFileProtected returns true if the file at realPath has a ChainFS protection record.
 func IsFileProtected(realPath string) bool {
-	buf := make([]byte, 64)
-	n, err := unix.Getxattr(realPath, xattrFileGuid, buf)
-	return err == nil && n > 0
+	r, _ := store.Protection.Get(realPath)
+	return r != nil
 }
 
 // IsProtectionActive returns true if the file is protected AND its expiry has not yet passed.
-// Files with no expiry xattr are treated as permanently protected.
 func IsProtectionActive(realPath string) bool {
-	if !IsFileProtected(realPath) {
+	r, _ := store.Protection.Get(realPath)
+	if r == nil {
 		return false
 	}
-	buf := make([]byte, 8)
-	n, err := unix.Getxattr(realPath, xattrProtectExpiry, buf)
-	if err != nil || n != 8 {
-		// No expiry stored — treat as permanently protected
+	if r.Expiry == 0 {
 		return true
 	}
-	expiry := int64(binary.LittleEndian.Uint64(buf))
-	return time.Now().Unix() < expiry
+	return time.Now().Unix() < r.Expiry
 }
 
 // ProtectionExpiresAt returns the Unix timestamp when protection expires, and whether one is set.
 func ProtectionExpiresAt(realPath string) (int64, bool) {
-	buf := make([]byte, 8)
-	n, err := unix.Getxattr(realPath, xattrProtectExpiry, buf)
-	if err != nil || n != 8 {
+	r, _ := store.Protection.Get(realPath)
+	if r == nil || r.Expiry == 0 {
 		return 0, false
 	}
-	return int64(binary.LittleEndian.Uint64(buf)), true
+	return r.Expiry, true
 }
