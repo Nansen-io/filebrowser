@@ -11,12 +11,23 @@ import (
 	"github.com/gtsteffaniak/go-logger/logger"
 )
 
+var defaultUserFolders = []string{"Photos", "Documents", "Audio", "Video"}
+
 // MakeUserDir makes the user directory according to settings.
 func MakeUserDir(fullPath string) error {
 	if err := os.MkdirAll(fullPath, os.ModePerm); err != nil {
 		return err
 	}
 	return nil
+}
+
+func createDefaultFolders(basePath string) {
+	for _, folder := range defaultUserFolders {
+		folderPath := filepath.Join(basePath, folder)
+		if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
+			logger.Errorf("createDefaultFolders: failed to create %s: %v", folderPath, err)
+		}
+	}
 }
 
 func MakeUserDirs(u *users.User, disableScopeChange bool) error {
@@ -43,10 +54,13 @@ func MakeUserDirs(u *users.User, disableScopeChange bool) error {
 			}
 			// Use JoinPathAsUnix to ensure scope remains in Unix format (forward slashes)
 			scope.Scope = utils.JoinPathAsUnix(scope.Scope, cleanedUserName)
+			isNew := !Exists(fullPath)
 			err := MakeUserDir(fullPath)
 			if err != nil {
 				logger.Errorf("MakeUserDirs: failed to create user home dir: %s", err)
 				// Continue to next scope even if this one failed
+			} else if isNew {
+				createDefaultFolders(fullPath)
 			}
 		} else if filepath.Base(scope.Scope) == cleanedUserName && source.Config.CreateUserDir {
 			// create directory exactly as specified
@@ -56,10 +70,13 @@ func MakeUserDirs(u *users.User, disableScopeChange bool) error {
 				logger.Errorf("MakeUserDirs: scope folder does not exist: %s", parentDir)
 				continue
 			}
+			isNew := !Exists(fullPath)
 			err := MakeUserDir(fullPath)
 			if err != nil {
 				logger.Errorf("create user: failed to create user home dir: %s", err)
 				// Continue to next scope even if this one failed
+			} else if isNew {
+				createDefaultFolders(fullPath)
 			}
 		} else {
 			// just assigning scope to path provided, so just check that it exists
