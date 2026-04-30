@@ -44,6 +44,9 @@
 
   <!-- Sidebar Quick Actions -->
   <SidebarActions />
+
+  <!-- Sidebar Directories -->
+  <SidebarDirectories />
 </template>
 
 <script>
@@ -54,6 +57,7 @@ import { fromNow } from "@/utils/moment";
 import SidebarLinks from "./Links.vue";
 import ShareInfoCard from "@/components/files/ShareInfoCard.vue";
 import SidebarActions from "./SidebarActions.vue";
+import SidebarDirectories from "./SidebarDirectories.vue";
 
 export default {
   name: "SidebarGeneral",
@@ -61,6 +65,7 @@ export default {
     SidebarLinks,
     ShareInfoCard,
     SidebarActions,
+    SidebarDirectories,
   },
   data() {
     return {};
